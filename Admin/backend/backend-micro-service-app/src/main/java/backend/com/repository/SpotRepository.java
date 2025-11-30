@@ -1,0 +1,14 @@
+package backend.com.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import backend.com.entity.Spot;
+
+@Repository
+public interface SpotRepository extends JpaRepository<Spot, Integer>{
+
+	List<Spot> findByVenueVenueId(int venueId);
+}

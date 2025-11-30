@@ -1,0 +1,5 @@
+package user.com.service.impl;
+
+public class AdminApiClient {
+
+}

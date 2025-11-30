@@ -1,0 +1,49 @@
+package backend.com.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import backend.com.entity.Slot;
+import backend.com.service.SlotService;
+
+@RestController
+@RequestMapping("slot")
+public class SlotController {
+
+	@Autowired
+	SlotService slotService;
+
+	@PostMapping(value = "add_slot")
+	public String addSlot(@RequestBody Slot slot) {
+		return slotService.addSlot(slot);
+	}
+
+	@GetMapping(value = "findAll_slot")
+	public List<Slot> findAllSlots() {
+		return slotService.findAllSlots();
+	}
+
+	@GetMapping(value = "find_slot_byid/{slotId}")
+	public Slot findSlotById(@PathVariable("slotId") int slotId) {
+		return slotService.findSlotById(slotId);
+	}
+
+	@PutMapping(value = "update_slot")
+	public String updateSlot(@RequestBody Slot slot) {
+		return slotService.updateSlot(slot);
+	}
+
+	@DeleteMapping(value = "delete_slot/{slotId}")
+	public String deleteSlot(@PathVariable("slotId") int slotId) {
+		return slotService.deleteSlot(slotId);
+	}
+}

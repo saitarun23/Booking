@@ -1,0 +1,5 @@
+package user.com.controller;
+
+public class CatalogController {
+
+}

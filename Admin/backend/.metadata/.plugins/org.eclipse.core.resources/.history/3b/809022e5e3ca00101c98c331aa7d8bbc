@@ -1,0 +1,8 @@
+package backend.com.entity;
+
+public class Venue {
+
+	
+	public int venueId;
+	
+}

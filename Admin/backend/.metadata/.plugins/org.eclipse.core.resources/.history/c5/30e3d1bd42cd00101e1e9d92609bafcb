@@ -1,0 +1,15 @@
+package user.com.dto;
+
+import lombok.Data;
+
+@Data
+public class SlotDTO {
+
+    private int slotId;
+    private String slotDate;
+    private String slotStartTime;
+    private String slotEndTime;
+    private Double slotPrice;
+    private boolean slotActive;
+    private SpotDto spot;
+}

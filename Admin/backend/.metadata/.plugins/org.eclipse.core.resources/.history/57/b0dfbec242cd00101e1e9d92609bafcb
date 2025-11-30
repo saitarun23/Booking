@@ -1,0 +1,13 @@
+package user.com.dto;
+
+import lombok.Data;
+
+@Data
+public class SubServiceDto {
+
+	private int serviceId;
+    private String serviceName;
+    private String serviceDescription;
+    private String image;
+    private CategoryDTO category;
+}

@@ -1,0 +1,36 @@
+package backend.com.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Entity
+@Table(name = "spots")
+@Data
+public class Spot {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "spot_id")
+	private int spotId;
+
+	@Column(name = "spot_name", nullable = false, length = 150)
+	private String spotName;
+
+	@Column(name = "spot_capacity")
+	private Integer spotCapacity;
+
+	@Column(name = "spot_price_per_hour", columnDefinition = "DECIMAL(10,2)")
+	private Double spotPricePerHour;
+
+	@ManyToOne
+	@JoinColumn(name = "venue_id", nullable = false)
+	private Venue venue;
+
+}

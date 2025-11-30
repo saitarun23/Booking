@@ -1,0 +1,51 @@
+package backend.com.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import backend.com.entity.Venue;
+import backend.com.service.VenueService;
+
+@RestController
+@RequestMapping("venue") // http://localhost:8181/venue/*
+public class VenueController {
+
+	@Autowired
+	VenueService venueService;
+
+	@PostMapping(value = "add_venue", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public String addVenue(@RequestBody Venue venue) {
+		return venueService.addVenue(venue);
+	}
+
+	@GetMapping(value = "findAll_venue", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public List<Venue> findAllVenues() {
+		return venueService.findAllVenues();
+	}
+
+	@GetMapping(value = "find_venue_byid/{venueId}")
+	public Venue findVenueById(@PathVariable("venueId") int venueId) {
+		return venueService.findVenueById(venueId);
+	}
+
+	@PutMapping(value = "update_venue", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public String updateVenue(@RequestBody Venue venue) {
+		return venueService.updateVenue(venue);
+	}
+
+	@DeleteMapping(value = "delete_venue/{venueId}")
+	public String deleteVenue(@PathVariable("venueId") int venueId) {
+		return venueService.deleteVenue(venueId);
+	}
+
+}

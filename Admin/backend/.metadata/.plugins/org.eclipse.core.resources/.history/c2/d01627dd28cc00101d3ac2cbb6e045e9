@@ -1,0 +1,14 @@
+package backend.com.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import backend.com.entity.Venue;
+
+@Repository
+public interface venueRepository extends JpaRepository<Venue, Integer>{
+	
+	List<Venue> findBySubServiceserviceId(int serviceId);
+}

@@ -1,0 +1,50 @@
+package backend.com.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import backend.com.entity.Slot;
+import backend.com.service.SlotService;
+
+@RestController
+@RequestMapping("slot")
+public class SlotController {
+
+	@Autowired
+	SlotService slotService;
+	
+	@PostMapping(value = "add_slot", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String addSlot(@RequestBody Slot slot) {
+        return slotService.addSlot(slot);
+    }
+
+    @GetMapping(value = "findAll_slot", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<Slot> findAllSlots() {
+        return slotService.findAllSlots();
+    }
+
+    @GetMapping(value = "find_slot_byid/{slotId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Slot findSlotById(@PathVariable("slotId") int slotId) {
+        return slotService.findSlotById(slotId);
+    }
+
+    @PutMapping(value = "update_slot", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String updateSlot(@RequestBody Slot slot) {
+        return slotService.updateSlot(slot);
+    }
+
+    @DeleteMapping(value = "delete_slot/{slotId}")
+    public String deleteSlot(@PathVariable("slotId") int slotId) {
+        return slotService.deleteSlot(slotId);
+    }
+}

@@ -1,0 +1,5 @@
+package user.com.dto;
+
+public class CategoryDto {
+
+}

@@ -1,0 +1,13 @@
+package backend.com.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import backend.com.repository.venueRepository;
+
+@Service
+public class VenueService {
+
+	@Autowired
+	venueRepository 
+}
