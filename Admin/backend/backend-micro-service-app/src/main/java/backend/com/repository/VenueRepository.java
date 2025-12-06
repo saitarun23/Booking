@@ -11,4 +11,6 @@ import backend.com.entity.Venue;
 public interface VenueRepository extends JpaRepository<Venue, Integer>{
 	
 	List<Venue> findBySubserviceServiceId(int serviceId);
+	List<Venue> findBySubservice_ServiceId(int serviceId);
+
 }

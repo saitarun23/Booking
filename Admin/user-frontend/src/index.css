@@ -1,0 +1,6 @@
+/* stylelint-disable at-rule-no-unknown */
+/* Tailwind directives: disable at-rule-no-unknown for PostCSS/Tailwind processing */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable at-rule-no-unknown */

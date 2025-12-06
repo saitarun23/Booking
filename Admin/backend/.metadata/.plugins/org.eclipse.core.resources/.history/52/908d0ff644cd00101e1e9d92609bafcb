@@ -1,5 +1,0 @@
-package user.com.config;
-
-public class RestTemplateConfig {
-
-}

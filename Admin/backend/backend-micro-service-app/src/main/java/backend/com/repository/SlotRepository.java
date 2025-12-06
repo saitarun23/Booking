@@ -1,5 +1,6 @@
 package backend.com.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import backend.com.entity.Slot;
 public interface SlotRepository extends JpaRepository<Slot, Integer>{
 
 	List<Slot> findBySpotSpotId(int spotId);
+	List<Slot> findBySpot_SpotIdAndSlotDate(int spotId, LocalDate date);
+
 }

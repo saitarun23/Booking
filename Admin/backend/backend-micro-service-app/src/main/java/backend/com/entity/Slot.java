@@ -25,7 +25,7 @@ public class Slot {
 
 	 @Column(name = "slot_date", nullable = false)
 	 private LocalDate slotDate;
-
+	 
 	 @Column(name = "slot_start_time", nullable = false)
 	 private LocalDateTime slotStartTime;
 

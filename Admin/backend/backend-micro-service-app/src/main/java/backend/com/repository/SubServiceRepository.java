@@ -11,4 +11,6 @@ import backend.com.entity.SubService;
 public interface SubServiceRepository extends JpaRepository<SubService, Integer>{
 	
 	List<SubService> findByCategoryCategoryId(int categoryId);
+	List<SubService> findByCategory_CategoryId(int categoryId);
+
 }

@@ -11,4 +11,6 @@ import backend.com.entity.Spot;
 public interface SpotRepository extends JpaRepository<Spot, Integer>{
 
 	List<Spot> findByVenueVenueId(int venueId);
+	List<Spot> findByVenue_VenueId(int venueId);
+
 }
