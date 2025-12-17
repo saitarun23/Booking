@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
-import { getVenues, getSpots, getSlots } from "../api/userApi";
+import { getSpots, getSlots } from "../api/userApi";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiMinus, FiPlus, FiShoppingCart, FiMapPin, FiCalendar, FiClock } from "react-icons/fi";
+import {
+  FiMinus,
+  FiPlus,
+  FiShoppingCart,
+  FiMapPin,
+  FiCalendar,
+  FiClock,
+} from "react-icons/fi";
 
 /* --------- UTILS --------- */
 const formatTime = (date) =>
@@ -14,8 +21,12 @@ const formatTime = (date) =>
 const generateTimeSlots = (startTime, endTime, selectedDate) => {
   if (!startTime || !endTime) return [];
 
-  const start = new Date(`${selectedDate}T${startTime.split("T")[1].slice(0, 5)}`);
-  const end = new Date(`${selectedDate}T${endTime.split("T")[1].slice(0, 5)}`);
+  const start = new Date(
+    `${selectedDate}T${startTime.split("T")[1].slice(0, 5)}`
+  );
+  const end = new Date(
+    `${selectedDate}T${endTime.split("T")[1].slice(0, 5)}`
+  );
 
   const slots = [];
   let current = new Date(start);
@@ -36,7 +47,7 @@ const generateTimeSlots = (startTime, endTime, selectedDate) => {
 };
 
 export default function Booking() {
-  const { id } = useParams();
+  const { id } = useParams(); // serviceId
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
 
@@ -51,19 +62,13 @@ export default function Booking() {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [duration, setDuration] = useState(1);
 
-  /* -------- FETCH VENUE -------- */
-  useEffect(() => {
-    if (!id) return;
-    getVenues(id).then((res) => setVenue(res.data?.[0]));
-  }, [id]);
-
   /* -------- FETCH SPOTS -------- */
   useEffect(() => {
     if (!id) return;
     getSpots(id).then((res) => setSpots(res.data || []));
   }, [id]);
 
-  /* -------- FETCH SLOTS (DATE RANGE BASED) -------- */
+  /* -------- FETCH SLOTS -------- */
   useEffect(() => {
     if (!spotId || !date) return;
 
@@ -74,14 +79,14 @@ export default function Booking() {
     });
   }, [spotId, date]);
 
-  /* -------- GENERATE UI TIME SLOTS (ONCE) -------- */
+  /* -------- GENERATE UI TIME SLOTS -------- */
   useEffect(() => {
     if (slotsFromBackend.length === 0) {
       setUiSlots([]);
       return;
     }
 
-    const slot = slotsFromBackend[0]; // one slot per spot
+    const slot = slotsFromBackend[0]; // single slot range
     const generated = generateTimeSlots(
       slot.slotStartTime,
       slot.slotEndTime,
@@ -125,12 +130,21 @@ export default function Booking() {
     <div className="max-w-7xl mx-auto px-6 py-8 flex gap-8">
       {/* LEFT CARD */}
       <div className="w-[420px] bg-white border rounded-xl p-6">
-        <h2 className="text-xl font-bold mb-1">{venue?.venueName}</h2>
-        <p className="text-gray-500 text-sm mb-4 flex items-center gap-1"><FiMapPin size={14} /> {venue?.venueAddress}</p>
+        {/* VENUE INFO (FIXED) */}
+        <h2 className="text-xl font-bold mb-1">
+          {venue?.venueName || "Select a court"}
+        </h2>
+
+        <p className="text-gray-500 text-sm mb-4 flex items-center gap-1">
+          <FiMapPin size={14} />
+          {venue?.venueAddress || "Select a court to see address"}
+        </p>
 
         {/* DATE */}
         <div className="mb-4">
-          <label className="font-semibold block mb-1 flex items-center gap-2"><FiCalendar size={16} /> Date</label>
+          <label className="font-semibold block mb-1 flex items-center gap-2">
+            <FiCalendar size={16} /> Date
+          </label>
           <input
             type="date"
             min={today}
@@ -151,6 +165,7 @@ export default function Booking() {
               );
               setSpotId(e.target.value);
               setSelectedSpot(spot);
+              setVenue(spot?.venue); // ✅ MAIN FIX
             }}
             className="w-full border p-3 rounded"
           >
@@ -165,7 +180,9 @@ export default function Booking() {
 
         {/* TIME */}
         <div className="mb-6">
-          <label className="font-semibold block mb-2 flex items-center gap-2"><FiClock size={16} /> Start Time</label>
+          <label className="font-semibold block mb-2 flex items-center gap-2">
+            <FiClock size={16} /> Start Time
+          </label>
 
           {uiSlots.length === 0 ? (
             <p className="text-gray-400">No slots available</p>
@@ -194,18 +211,18 @@ export default function Booking() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setDuration(Math.max(1, duration - 1))}
-              className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center"
+              className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center"
             >
-              <FiMinus size={18} />
+              <FiMinus />
             </button>
 
             <span className="font-semibold">{duration} Hr</span>
 
             <button
               onClick={() => setDuration(duration + 1)}
-              className="w-10 h-10 rounded-full bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center"
+              className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center"
             >
-              <FiPlus size={18} />
+              <FiPlus />
             </button>
           </div>
         </div>
