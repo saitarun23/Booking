@@ -17,7 +17,18 @@ public interface SlotRepository extends JpaRepository<Slot, Integer> {
 
 	List<Slot> findBySpotSpotId(int spotId);
 
-	List<Slot> findBySpot_SpotIdAndSlotStartDate(int spotId, LocalDate date);
+	//List<Slot> findBySpot_SpotIdAndSlotStartDate(int spotId, LocalDate date);
+	
+	 @Query("""
+		        SELECT s FROM Slot s
+		        WHERE s.spot.spotId = :spotId
+		        AND :date BETWEEN s.slotStartDate AND s.slotEndDate
+		        AND s.slotActive = true
+		    """)
+		    List<Slot> findAvailableSlotsForDate(
+		        @Param("spotId") int spotId,
+		        @Param("date") LocalDate date
+		    );
 
 	// Check overlapping time for same Spot
 	@Query("""
