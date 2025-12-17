@@ -45,7 +45,10 @@ export const getSpots = (venueId) =>
 export const getSlots = (spotId, date) =>
   API.get(`/slots/${spotId}?date=${date}`);
 
-export const bookSlot = (data) => API.post("/book", data);
+export const checkAvailability = (spotId, date, startTime, endTime) =>
+  API.get(`/slot/check-availability?spotId=${spotId}&date=${date}&startTime=${startTime}&endTime=${endTime}`);
+
+export const Booking = (data) => API.post("/book", data);
 
 export const myBookings = (email) =>
   API.get(`/mybookings/${email}`);

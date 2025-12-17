@@ -26,7 +26,19 @@ public class Venue {
 
 	@Column(name = "venue_address", columnDefinition = "TEXT")
 	private String venueAddress;
+	
+	@Column(name = "venue_description", columnDefinition = "TEXT")
+	private String venueDescription;
 
+	@Column(name = "latitude", nullable = false)
+	private Double latitude;
+
+	@Column(name = "longitude", nullable = false)
+	private Double longitude;
+	
+	@Column(name = "venue_amenities", columnDefinition = "TEXT")
+	private String venueAmenities;
+	
 	@Lob
 	@Column(name = "image", columnDefinition = "LONGTEXT")
 	private String image;

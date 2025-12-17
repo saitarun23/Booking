@@ -1,3 +1,4 @@
+
 export default function Card({ item, onClick }) {
   // Detect if image is a base64 string (not a URL)
   let imgSrc = item.image;

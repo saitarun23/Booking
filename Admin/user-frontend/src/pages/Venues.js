@@ -1,267 +1,284 @@
 import { useEffect, useState } from "react";
-import { getVenues, getSpots, getSlots } from "../api/userApi";
+import { getVenues } from "../api/userApi";
 import { useParams, useNavigate } from "react-router-dom";
-import Card from "../components/Card";
+import VenueLocation from "../components/VenueLocation";
+import "../styles/venue.css";
 
 export default function Venues() {
   const { id } = useParams();
-  const [venues, setVenues] = useState([]);
+  const [venue, setVenue] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedVenue, setSelectedVenue] = useState(null);
-  const [spots, setSpots] = useState([]);
-  const [spotsLoading, setSpotsLoading] = useState(false);
-  const [selectedSpot, setSelectedSpot] = useState(null);
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [slots, setSlots] = useState([]);
-  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const nav = useNavigate();
 
-  // Fetch venues on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   useEffect(() => {
     if (!id) return;
     setLoading(true);
     getVenues(id)
       .then((res) => {
-        setVenues(res.data || []);
+        const venues = res.data || [];
+        // Since API returns list, take the first venue (or you can adjust based on your needs)
+        if (venues.length > 0) {
+          setVenue(venues[0]);
+        } else {
+          setVenue(null);
+        }
         setError(null);
       })
       .catch((err) => {
         console.error(err);
-        setError("Failed to load venues");
-        setVenues([]);
+        setError("Failed to load venue details");
+        setVenue(null);
       })
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Fetch spots when venue is selected
-  useEffect(() => {
-    if (!selectedVenue) {
-      setSpots([]);
-      setSelectedSpot(null);
-      setSlots([]);
-      return;
+  const handleNextImage = () => {
+    if (venue?.images && venue.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % venue.images.length);
     }
+  };
 
-    setSpotsLoading(true);
-    getSpots(selectedVenue)
-      .then((res) => {
-        setSpots(res.data || []);
-        if (res.data && res.data.length > 0) {
-          setSelectedSpot(res.data[0].spotId);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setSpots([]);
-      })
-      .finally(() => setSpotsLoading(false));
-  }, [selectedVenue]);
-
-  // Fetch slots when spot or date changes
-  useEffect(() => {
-    if (!selectedSpot || !date) {
-      setSlots([]);
-      return;
+  const handlePrevImage = () => {
+    if (venue?.images && venue.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + venue.images.length) % venue.images.length);
     }
+  };
 
-    setSlotsLoading(true);
-    getSlots(selectedSpot, date)
-      .then((res) => {
-        setSlots(res.data || []);
-      })
-      .catch((err) => {
-        console.error(err);
-        setSlots([]);
-      })
-      .finally(() => setSlotsLoading(false));
-  }, [selectedSpot, date]);
+  const getImageSrc = (image) => {
+    if (!image) return null;
+    if (/^[A-Za-z0-9+/=]+$/.test(image) && image.length > 100) {
+      return `data:image/png;base64,${image}`;
+    }
+    return image;
+  };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-          <p className="mt-4 text-gray-600">Loading venues...</p>
+      <div className="venue-wrapper">
+        <div className="venue-container">
+          <div className="venue-loading">
+            <div className="venue-loading-content">
+              <div className="venue-loading-spinner"></div>
+              <p className="venue-loading-text">Loading venue details...</p>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !venue) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-lg">
-          <h2 className="font-semibold mb-2">Error</h2>
-          <p>{error}</p>
+      <div className="venue-wrapper">
+        <div className="venue-container">
+          <button
+            onClick={() => nav(-1)}
+            className="venue-breadcrumb-link"
+            style={{ marginBottom: "1rem", fontSize: "1rem", padding: "0.5rem" }}
+          >
+            ← Go Back
+          </button>
+          <div className="venue-error">
+            <div className="venue-error-flex">
+              <svg className="venue-error-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <h2 className="venue-error-title">Error Loading Venue</h2>
+                <p className="venue-error-message">{error || "Venue not found"}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const venueImages = venue.images && Array.isArray(venue.images) ? venue.images : [venue.image];
+  const currentImage = venueImages[currentImageIndex];
+  const imageSrc = getImageSrc(currentImage);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        {/* Venues Grid - Left Side (Takes 2 columns) */}
-        <div className="lg:col-span-2">
-          <h1 className="text-3xl font-bold text-gray-800 mb-8">Venues</h1>
-
-          {venues.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <p>No venues available for this service</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {venues.map((venue) => (
-                <div
-                  key={venue.venueId}
-                  onClick={() => setSelectedVenue(venue.venueId)}
-                  className="cursor-pointer"
-                >
-                  <Card
-                    item={{
-                      image: venue.image,
-                      name: venue.venueName,
-                      description: venue.venueAddress,
-                    }}
-                  />
-                  {selectedVenue === venue.venueId && (
-                    <div className="mt-2 text-sm text-green-600 font-semibold">
-                      ✓ Selected
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+    <div className="venue-wrapper">
+      <div className="venue-container">
+        {/* Breadcrumb */}
+        <div className="venue-breadcrumb">
+          <span
+            className="venue-breadcrumb-link"
+            onClick={() => nav("/category/1")}
+          >
+            Categories
+          </span>
+          <span className="venue-breadcrumb-separator">›</span>
+          <span
+            className="venue-breadcrumb-link"
+            onClick={() => nav(-1)}
+          >
+            Services
+          </span>
+          <span className="venue-breadcrumb-separator">›</span>
+          <span className="venue-breadcrumb-item">{venue.venueName}</span>
         </div>
 
-        {/* Spots and Slots View - Right Side (2 columns) */}
-        <div className="lg:col-span-2 space-y-6">
-          {!selectedVenue ? (
-            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
-              <p>Select a venue to view spots and slots</p>
-            </div>
-          ) : (
-            <>
-              {/* Spots Section */}
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  Available Spots
-                </h2>
-
-                {spotsLoading ? (
-                  <div className="text-center py-6">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-                  </div>
-                ) : spots.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No spots available</p>
-                ) : (
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {spots.map((spot) => (
-                      <div
-                        key={spot.spotId}
-                        onClick={() => setSelectedSpot(spot.spotId)}
-                        className={`p-3 border-2 rounded-lg cursor-pointer transition ${
-                          selectedSpot === spot.spotId
-                            ? "border-green-600 bg-green-50"
-                            : "border-gray-200 hover:border-green-400"
-                        }`}
-                      >
-                        <div className="font-medium text-sm text-gray-800">
-                          {spot.spotName}
-                        </div>
-                        <div className="text-xs text-gray-600 mt-1">
-                          Capacity: {spot.spotCapacity}
-                        </div>
-                        <div className="text-xs text-green-600 font-semibold mt-1">
-                          ₹{spot.spotPricePerHour}/hr
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+        {/* Main Content */}
+        <div className="venue-content">
+          {/* Left Column - Gallery and Info */}
+          <div>
+            {/* Gallery */}
+            <div className="venue-gallery">
+              <div className="venue-main-image" style={{ position: "relative" }}>
+                <img
+                  src={imageSrc || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect fill='%23ddd' width='600' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%23999'%3ENo Image Available%3C/text%3E%3C/svg%3E"}
+                  alt={venue.venueName}
+                />
+                {venueImages.length > 1 && (
+                  <>
+                    <button className="carousel-nav-btn carousel-prev" onClick={handlePrevImage}>
+                      ‹
+                    </button>
+                    <button className="carousel-nav-btn carousel-next" onClick={handleNextImage}>
+                      ›
+                    </button>
+                  </>
                 )}
               </div>
-
-              {/* Slots Section */}
-              {selectedSpot && (
-                <div className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    Available Slots
-                  </h2>
-
-                  {/* Date Picker */}
-                  <div className="mb-4">
-                    <input
-                      type="date"
-                      min={today}
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full border border-gray-300 p-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              {venueImages.length > 1 && (
+                <div className="venue-carousel-controls">
+                  {venueImages.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`carousel-dot ${index === currentImageIndex ? "active" : ""}`}
+                      onClick={() => setCurrentImageIndex(index)}
                     />
-                  </div>
-
-                  {/* Slots List */}
-                  {slotsLoading ? (
-                    <div className="text-center py-6">
-                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-                    </div>
-                  ) : slots.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4">
-                      No slots available for this date
-                    </p>
-                  ) : (
-                    <div className="space-y-2 max-h-64 overflow-y-auto">
-                      {slots.map((slot) => (
-                        <div
-                          key={slot.slotId}
-                          className={`p-3 border rounded-lg text-sm transition ${
-                            slot.slotActive
-                              ? "border-green-200 bg-green-50 cursor-pointer hover:border-green-400"
-                              : "border-gray-200 bg-gray-50 opacity-60"
-                          }`}
-                          onClick={() => {
-                            if (slot.slotActive) {
-                              nav(`/book/${slot.slotId}`);
-                            }
-                          }}
-                        >
-                          <div className="flex justify-between items-center">
-                            <div className="font-medium text-gray-800">
-                              {new Date(slot.slotStartTime).toLocaleTimeString(
-                                [],
-                                { hour: "2-digit", minute: "2-digit" }
-                              )}{" "}
-                              -{" "}
-                              {new Date(slot.slotEndTime).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </div>
-                            <span
-                              className={`text-xs font-semibold px-2 py-1 rounded ${
-                                slot.slotActive
-                                  ? "bg-green-100 text-green-700"
-                                  : "bg-gray-200 text-gray-700"
-                              }`}
-                            >
-                              {slot.slotActive ? "Available" : "Booked"}
-                            </span>
-                          </div>
-                          <div className="text-xs text-gray-600 mt-1">
-                            ₹{slot.slotPrice}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  ))}
                 </div>
               )}
-            </>
-          )}
+            </div>
+
+            {/* Header */}
+            <div className="venue-header" style={{ marginTop: "2rem" }}>
+              <div className="venue-title-group">
+                <div>
+                  <h1 className="venue-title">{venue.venueName}</h1>
+                </div>
+              </div>
+            </div>
+
+            {/* Amenities */}
+            <div className="amenities-box">
+              <h3>Amenities</h3>
+
+              <div className="amenities-list">
+                {venue.venueAmenities
+                  ?.split(",")
+                  .map((item, index) => (
+                    <div className="amenity-item" key={index}>
+                      <span className="check">✔</span>
+                      <span>{item.trim()}</span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Sports Section */}
+            {venue.sports && venue.sports.length > 0 && (
+              <div className="venue-sports-section" style={{ marginTop: "2rem" }}>
+                <h2 className="venue-sports-title">Sports Available</h2>
+                <p className="venue-sports-subtitle">(Click on sports to view price chart)</p>
+                <div className="venue-sports-grid">
+                  {venue.sports.map((sport, idx) => (
+                    <div
+                      key={idx}
+                      className="venue-sport-item"
+                      onClick={() => nav(`/booking/${venue.venueId}`)}
+                    >
+                      <div className="venue-sport-icon">🎯</div>
+                      <p className="venue-sport-name">{sport.sportName}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+        
+            {/* About Venue */}
+            {(venue.venueDescription || venue.description) && (
+              <div className="venue-about-section">
+                <h2 className="venue-about-title">About Venue</h2>
+                <div className="venue-about-content">
+                  {(venue.venueDescription || venue.description)
+                    ?.split("\n")
+                    .filter((para) => para.trim())
+                    .map((para, idx) => (
+                      <p key={idx}>{para.trim()}</p>
+                    ))}
+                  {venue.features && venue.features.length > 0 && (
+                    <>
+                      <ul className="venue-about-list">
+                        {venue.features.map((feature, idx) => (
+                          <li key={idx}>{feature}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Rules Section */}
+            {venue.rules && venue.rules.length > 0 && (
+              <div className="venue-rules-section">
+                <h2 className="venue-rules-title">General Rules</h2>
+                <ul className="venue-rules-list">
+                  {venue.rules.map((rule, idx) => (
+                    <li key={idx}>{rule}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="venue-sidebar">
+            {/* Book Now Button */}
+            <button
+              className="venue-book-btn venue-book-btn-gradient"
+              onClick={() => nav(`/booking/${venue.venueId}`)}
+            >
+              Book Now
+            </button>
+
+            {/* Info Card */}
+            <div className="venue-info-card">
+              {venue.openingTime && venue.closingTime && (
+                <div className="venue-info-item">
+                  <div className="venue-info-label">Timing</div>
+                  <div className="venue-info-value">
+                    {venue.openingTime} - {venue.closingTime}
+                  </div>
+                </div>
+              )}
+              {venue.venueAddress && (
+                <div className="venue-info-item">
+                  <div className="venue-info-label">Location</div>
+                  <div className="venue-info-value">{venue.venueAddress}</div>
+                </div>
+              )}
+            </div>
+           
+            {/* Location Map Card */}
+            {venue.latitude && venue.longitude && (
+              <div className="venue-info-card" style={{ padding: 0, overflow: "hidden" }}>
+                <VenueLocation venue={venue} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

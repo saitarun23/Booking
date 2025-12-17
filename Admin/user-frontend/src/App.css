@@ -1,3 +1,6 @@
+/* Import Global Styles */
+@import "./styles/global.css";
+
 .App {
   text-align: center;
 }

@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import { getCategories } from "../api/userApi";
 import Card from "../components/Card";
 import { useNavigate } from "react-router-dom";
+import HeroCarousel from "../components/HeroCarousel";
+import Newsletter from "../components/Newsletter";
+import "../styles/categories.css";
 
 export default function Categories() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const nav = useNavigate();
 
   useEffect(() => {
@@ -24,12 +29,19 @@ export default function Categories() {
       .finally(() => setLoading(false));
   }, []);
 
+  const filteredData = data.filter((cat) => {
+    const matchesSearch = cat.categoryName
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    return matchesSearch;
+  });
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-          <p className="mt-4 text-gray-600">Loading categories...</p>
+      <div className="categories-loading">
+        <div className="categories-loading-content">
+          <div className="categories-loading-spinner"></div>
+          <p className="categories-loading-text">Loading categories...</p>
         </div>
       </div>
     );
@@ -37,40 +49,69 @@ export default function Categories() {
 
   if (error) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-lg">
-          <h2 className="font-semibold mb-2">Error</h2>
-          <p>{error}</p>
+      <div className="categories-container categories-page">
+        <div className="categories-error">
+          <div className="categories-error-flex">
+            <svg className="categories-error-icon" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <h2 className="categories-error-title">Error Loading Categories</h2>
+              <p className="categories-error-message">{error}</p>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
-        Choose a Category
-      </h1>
+    <>
+      <HeroCarousel />
+      <div className="categories-wrapper">
+        <div className="categories-container categories-page">
+          {/* Header Section */}
+          <div className="categories-header">
+            <div className="categories-header-content">
+              <h1 className="categories-title">
+                Explore Our Categories
+              </h1>
+              <p className="categories-subtitle">
+                Discover a wide range of premium venues and services for your perfect event
+              </p>
+            </div>
 
-      {data.length === 0 ? (
-        <div className="text-center py-12 text-gray-500">
-          <p>No categories available</p>
+           
+          </div>
+
+          {/* Categories Grid */}
+          {filteredData.length === 0 ? (
+            <div className="categories-empty">
+              <svg className="categories-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="categories-empty-title">No categories found</p>
+              <p className="categories-empty-text">Try adjusting your search terms</p>
+            </div>
+          ) : (
+            <div className="categories-grid">
+              {filteredData.map((cat, idx) => (
+                <Card
+                  key={cat.categoryId}
+                  item={{
+                    image: cat.image,
+                    name: cat.categoryName,
+                    description: cat.categoryDescription,
+                  }}
+                  index={idx}
+                  onClick={() => nav(`/category/${cat.categoryId}`)}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {data.map((cat) => (
-            <Card
-              key={cat.categoryId}
-              item={{
-                image: cat.image,
-                name: cat.categoryName,
-                description: cat.categoryDescription,
-              }}
-              onClick={() => nav(`/category/${cat.categoryId}`)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+      </div>
+      <Newsletter />
+    </>
   );
 }

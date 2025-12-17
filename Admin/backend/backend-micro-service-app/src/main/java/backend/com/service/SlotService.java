@@ -12,64 +12,95 @@ import backend.com.repository.SlotRepository;
 @Service
 public class SlotService {
 
-	@Autowired
-	SlotRepository slotRepository;
+    @Autowired
+    private SlotRepository slotRepository;
 
-	public String addSlot(Slot slot) {
+    // ---------------- ADD SLOT (ADMIN) ------------------
+    public String addSlot(Slot slot) {
 
-		Optional<Slot> result = slotRepository.findById(slot.getSlotId());
+        // 1. Slot ID must not be manually passed
+        if (slot.getSlotId() != 0) {
+            return "Slot ID must not be passed manually. Auto-generated.";
+        }
 
-		if (result.isPresent()) {
-			return "Slot ID must be unique";
-		} else {
-			slotRepository.save(slot);
-			return "Slot Stored Successfully";
-		}
-	}
+        // 2. Date validation
+        if (slot.getSlotStartDate().isAfter(slot.getSlotEndDate())) {
+            return "Slot start date must be before end date.";
+        }
 
-	public List<Slot> findAllSlots() {
-		return slotRepository.findAll();
-	}
+        // 3. Time validation
+        if (slot.getSlotStartTime().isAfter(slot.getSlotEndTime())) {
+            return "Slot start time must be before end time.";
+        }
 
-	public Slot findSlotById(int slotId) {
+        // 4. Prevent overlapping slots (same spot)
+        boolean overlap = slotRepository.existsOverlappingSlot(
+                slot.getSpot().getSpotId(),
+                slot.getSlotStartTime(),
+                slot.getSlotEndTime()
+        );
 
-		Optional<Slot> result = slotRepository.findById(slotId);
+        if (overlap) {
+            return "Slot overlaps with an existing slot.";
+        }
 
-		if (result.isPresent()) {
-			return result.get();
-		} else {
-			return null;
-		}
-	}
+        slotRepository.save(slot);
+        return "Slot Stored Successfully";
+    }
 
-	public String updateSlot(Slot slot) {
 
-		Optional<Slot> result = slotRepository.findById(slot.getSlotId());
+    // ---------------- UPDATE SLOT (ADMIN) ------------------
+    public String updateSlot(Slot slot) {
 
-		if (result.isPresent()) {
-			Slot s = result.get();
-			s.setSlotDate(slot.getSlotDate());
-			s.setSlotStartTime(slot.getSlotStartTime());
-			s.setSlotEndTime(slot.getSlotEndTime());
-			s.setSlotPrice(slot.getSlotPrice());
-			s.setSlotActive(slot.getSlotActive());
-			s.setSpot(slot.getSpot()); // FK update
-			slotRepository.saveAndFlush(s);
-			return "Slot Updated Successfully";
-		} else {
-			return "Slot Record Not Present";
-		}
-	}
+        Optional<Slot> existing = slotRepository.findById(slot.getSlotId());
+        if (existing.isEmpty()) {
+            return "Slot not found";
+        }
 
-	public String deleteSlot(int slotId) {
+        // Same validations as add
+        if (slot.getSlotStartDate().isAfter(slot.getSlotEndDate())) {
+            return "Slot start date must be before end date.";
+        }
 
-		Optional<Slot> result = slotRepository.findById(slotId);
+        if (slot.getSlotStartTime().isAfter(slot.getSlotEndTime())) {
+            return "Slot start time must be before end time.";
+        }
 
-		if (result.isPresent()) {
-			slotRepository.deleteById(slotId);
-			return "Slot Deleted Successfully";
-		} else {
-			return "Slot Record Not Present";
-		}
-	}
+        boolean overlap = slotRepository.existsOverlappingSlot(
+                slot.getSpot().getSpotId(),
+                slot.getSlotStartTime(),
+                slot.getSlotEndTime()
+        );
+
+        if (overlap) {
+            return "Updated slot overlaps with another slot.";
+        }
+
+        slotRepository.save(slot);
+        return "Slot Updated Successfully";
+    }
+
+
+    // ---------------- DELETE SLOT (ADMIN) ------------------
+    public String deleteSlot(int slotId) {
+        Optional<Slot> slot = slotRepository.findById(slotId);
+        if (slot.isEmpty()) {
+            return "Slot Not Found";
+        }
+
+        slotRepository.deleteById(slotId);
+        return "Slot Deleted Successfully";
+    }
+
+
+    // ---------------- GET ALL SLOTS ------------------
+    public List<Slot> findAllSlots() {
+        return slotRepository.findAll();
+    }
+
+
+    // ---------------- GET SLOT BY ID ------------------
+    public Slot findSlotById(int slotId) {
+        return slotRepository.findById(slotId).orElse(null);
+    }
 }

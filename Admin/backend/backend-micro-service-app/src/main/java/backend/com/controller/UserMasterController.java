@@ -1,7 +1,10 @@
+
 package backend.com.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("user")
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin
 @RequiredArgsConstructor
 public class UserMasterController {
 
@@ -57,6 +60,36 @@ public class UserMasterController {
     @GetMapping("/slots/{spotId}")
     public List<Slot> getSlots(@PathVariable int spotId, @RequestParam String date) {
         LocalDate d = LocalDate.parse(date);
-        return slotRepo.findBySpot_SpotIdAndSlotDate(spotId, d);
+        return slotRepo.findBySpot_SpotIdAndSlotStartDate(spotId, d);
     }
+    
+    @GetMapping("/slot/check-availability")
+    public Map<String, Object> checkAvailability(
+            @RequestParam int spotId,
+            @RequestParam String date,
+            @RequestParam String startTime,   // example: "10:00"
+            @RequestParam String endTime      // example: "11:00"
+    ) {
+
+//        LocalDate selectedDate = LocalDate.parse(date);
+
+        // Combine date + time
+        LocalDateTime start = LocalDateTime.parse(date + "T" + startTime);
+        LocalDateTime end = LocalDateTime.parse(date + "T" + endTime);
+
+        boolean exists = slotRepo.existsOverlappingSlot(spotId, start, end);
+
+        if (exists) {
+            return Map.of(
+                    "available", false,
+                    "message", "This time slot is already booked"
+            );
+        } else {
+            return Map.of(
+                    "available", true,
+                    "message", "Time slot is available"
+            );
+        }
+    }
+
 }

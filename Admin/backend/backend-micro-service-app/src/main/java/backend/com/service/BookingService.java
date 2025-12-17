@@ -27,10 +27,10 @@ public class BookingService {
             () -> new RuntimeException("Slot not found: " + req.getSlotId())
         );
 
-        // prevent double booking (simple approach)
-        if (Boolean.FALSE.equals(slot.getSlotActive())) {
-            throw new RuntimeException("Slot already booked");
-        }
+//        // prevent double booking (simple approach)
+//        if (Boolean.FALSE.equals(slot.getSlotActive())) {
+//            throw new RuntimeException("Slot already booked");
+//        }
 
         // mark slot inactive (booked)
         slot.setSlotActive(false);

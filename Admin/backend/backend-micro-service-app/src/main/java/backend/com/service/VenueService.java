@@ -50,6 +50,10 @@ public class VenueService {
 			Venue v = result.get();
 			v.setVenueName(venue.getVenueName());
 			v.setVenueAddress(venue.getVenueAddress());
+			v.setVenueDescription(venue.getVenueDescription());
+			v.setLatitude(venue.getLatitude());
+			v.setLongitude(venue.getLongitude());
+			v.setVenueAmenities(venue.getVenueAmenities());
 			v.setImage(venue.getImage());
 			v.setSubservice(venue.getSubservice()); // ⭐ important (FK update)
 			venueRepository.saveAndFlush(v);

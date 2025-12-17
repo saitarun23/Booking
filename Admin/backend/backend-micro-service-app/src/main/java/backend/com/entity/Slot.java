@@ -23,17 +23,17 @@ public class Slot {
 	 @Column(name = "slot_id")
 	 private int slotId;
 
-	 @Column(name = "slot_date", nullable = false)
-	 private LocalDate slotDate;
+	 @Column(name = "slot_start_date", nullable = false)
+	 private LocalDate slotStartDate;
+	 
+	 @Column(name = "slot_end_date", nullable = false)
+	 private LocalDate slotEndDate;
 	 
 	 @Column(name = "slot_start_time", nullable = false)
 	 private LocalDateTime slotStartTime;
 
 	 @Column(name = "slot_end_time", nullable = false)
 	 private LocalDateTime slotEndTime;
-
-	 @Column(name = "slot_price", columnDefinition = "DECIMAL(10,2)")
-	 private Double slotPrice;
 
 	 @Column(name = "slot_active")
 	 private Boolean slotActive = true;
