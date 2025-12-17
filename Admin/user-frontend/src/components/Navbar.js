@@ -37,10 +37,10 @@ export default function Navbar() {
             <Link to="/contact" className="navbar-link">
               Contact
             </Link>
-            <Link to="/cart" className="navbar-cart-link">
+            {/* <Link to="/cart" className="navbar-cart-link">
               Cart
               <span className="navbar-cart-badge">0</span>
-            </Link>
+            </Link> */}
           </div>
 
           {/* Auth Buttons */}
@@ -73,9 +73,9 @@ export default function Navbar() {
             <Link to="/categories" className="navbar-mobile-link">
               Categories
             </Link>
-            <Link to="/cart" className="navbar-mobile-link">
+            {/* <Link to="/cart" className="navbar-mobile-link">
               Cart
-            </Link>
+            </Link> */}
             <div className="navbar-mobile-divider"></div>
             <button className="navbar-mobile-signin-btn">
               Sign In
