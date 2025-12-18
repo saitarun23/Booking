@@ -11,6 +11,41 @@ const formatTime = (time) =>
     hour12: true,
   });
 
+/* -------- STORAGE UTILITY -------- */
+const saveCartData = (data) => {
+  // Store only essential data to avoid quota exceeded
+  const essentialData = {
+    venue: {
+      venueName: data.venue?.venueName,
+      venueAddress: data.venue?.venueAddress,
+    },
+    spot: {
+      spotName: data.spot?.spotName,
+      spotPricePerHour: data.spot?.spotPricePerHour,
+    },
+    date: data.date,
+    startTime: data.startTime,
+    endTime: data.endTime,
+    duration: data.duration,
+    totalPrice: data.totalPrice,
+  };
+
+  try {
+    localStorage.setItem("cartData", JSON.stringify(essentialData));
+    return true;
+  } catch (error) {
+    if (error.name === "QuotaExceededError") {
+      console.error("LocalStorage quota exceeded. Clearing old data...");
+      localStorage.clear();
+      try {
+        localStorage.setItem("cartData", JSON.stringify(essentialData));
+      } catch (retryError) {
+        console.error("Failed to save cart data even after clearing storage", retryError);
+      }
+    }
+  }
+};
+
 export default function Cart() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -18,14 +53,19 @@ export default function Cart() {
 
   useEffect(() => {
     if (state) {
-      // Save to localStorage
-      localStorage.setItem("cartData", JSON.stringify(state));
+      // Save to localStorage with optimization
+      saveCartData(state);
       setCartData(state);
     } else {
       // Load from localStorage
       const savedCart = localStorage.getItem("cartData");
       if (savedCart) {
-        setCartData(JSON.parse(savedCart));
+        try {
+          setCartData(JSON.parse(savedCart));
+        } catch (error) {
+          console.error("Failed to parse saved cart data", error);
+          localStorage.removeItem("cartData");
+        }
       }
     }
   }, [state]);
