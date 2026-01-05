@@ -13,7 +13,6 @@ const formatTime = (time) =>
 
 /* -------- STORAGE UTILITY -------- */
 const saveCartData = (data) => {
-  // Store only essential data to avoid quota exceeded
   const essentialData = {
     venue: {
       venueName: data.venue?.venueName,
@@ -26,23 +25,15 @@ const saveCartData = (data) => {
     date: data.date,
     startTime: data.startTime,
     endTime: data.endTime,
+    selectedSlots: data.selectedSlots, // Saving the full array
     duration: data.duration,
     totalPrice: data.totalPrice,
   };
 
   try {
     localStorage.setItem("cartData", JSON.stringify(essentialData));
-    return true;
   } catch (error) {
-    if (error.name === "QuotaExceededError") {
-      console.error("LocalStorage quota exceeded. Clearing old data...");
-      localStorage.clear();
-      try {
-        localStorage.setItem("cartData", JSON.stringify(essentialData));
-      } catch (retryError) {
-        console.error("Failed to save cart data even after clearing storage", retryError);
-      }
-    }
+    console.error("LocalStorage error:", error);
   }
 };
 
@@ -53,17 +44,14 @@ export default function Cart() {
 
   useEffect(() => {
     if (state) {
-      // Save to localStorage with optimization
       saveCartData(state);
       setCartData(state);
     } else {
-      // Load from localStorage
       const savedCart = localStorage.getItem("cartData");
       if (savedCart) {
         try {
           setCartData(JSON.parse(savedCart));
         } catch (error) {
-          console.error("Failed to parse saved cart data", error);
           localStorage.removeItem("cartData");
         }
       }
@@ -76,7 +64,6 @@ export default function Cart() {
     navigate("/");
   };
 
-  // SAFETY CHECK
   if (!cartData) {
     return (
       <div className="h-screen flex items-center justify-center flex-col gap-4">
@@ -84,8 +71,8 @@ export default function Cart() {
           <FiShoppingCart size={24} /> Cart is empty
         </p>
         <button
-          onClick={() => navigate(-1)}
-          className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+          onClick={() => navigate("/")}
+          className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
         >
           Continue Shopping
         </button>
@@ -97,29 +84,29 @@ export default function Cart() {
     venue,
     spot,
     date,
-    startTime,
-    endTime,
+    selectedSlots,
     duration,
     totalPrice,
   } = cartData;
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
-      <h1 className="text-3xl font-bold mb-6 flex items-center gap-2"><FiShoppingCart /> Your Cart</h1>
+      <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
+        <FiShoppingCart /> Your Cart
+      </h1>
 
-      {/* CART ITEMS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* MAIN CART CARD */}
+        {/* LEFT: BOOKING DETAILS */}
         <div className="md:col-span-2 bg-white border rounded-xl p-6 shadow-sm">
           <h2 className="text-2xl font-bold mb-6 border-b pb-4">Booking Details</h2>
 
-          {/* VENUE CARD */}
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
             <p className="text-lg font-semibold text-blue-900">{venue?.venueName}</p>
-            <p className="text-blue-700 text-sm mt-1 flex items-center gap-2"><FaMapMarkerAlt size={14} /> {venue?.venueAddress}</p>
+            <p className="text-blue-700 text-sm mt-1 flex items-center gap-2">
+              <FaMapMarkerAlt size={14} /> {venue?.venueAddress}
+            </p>
           </div>
 
-          {/* BOOKING DETAILS */}
           <div className="space-y-4">
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
               <span className="font-semibold text-gray-700">Court</span>
@@ -127,68 +114,85 @@ export default function Cart() {
             </div>
 
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-700 flex items-center gap-2"><FaCalendar size={14} /> Date</span>
-              <span className="text-gray-900 font-medium">{new Date(date).toLocaleDateString('en-IN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</span>
-            </div>
-
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-700 flex items-center gap-2"><FaClock size={14} /> Time</span>
+              <span className="font-semibold text-gray-700 flex items-center gap-2">
+                <FaCalendar size={14} /> Date
+              </span>
               <span className="text-gray-900 font-medium">
-                {formatTime(startTime)} – {formatTime(endTime)}
+                {new Date(date).toLocaleDateString('en-IN', { 
+                  weekday: 'short', 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
               </span>
             </div>
 
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-700">Duration</span>
-              <span className="text-gray-900 font-medium">{duration} Hour{duration > 1 ? 's' : ''}</span>
+            {/* UPDATED TIME SECTION: Displays individual slots as badges */}
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <span className="font-semibold text-gray-700 flex items-center gap-2 mb-3">
+                <FaClock size={14} /> Selected Time Slots
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {selectedSlots && selectedSlots.length > 0 ? (
+                  selectedSlots.map((slot, index) => (
+                    <div 
+                      key={index} 
+                      className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md text-sm font-bold border border-blue-200"
+                    >
+                      {formatTime(slot.start)} - {formatTime(slot.end)}
+                    </div>
+                  ))
+                ) : (
+                  <span className="text-gray-400">No specific slots data found</span>
+                )}
+              </div>
             </div>
 
             <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="font-semibold text-gray-700">Rate/Hour</span>
-              <span className="text-gray-900 font-medium">₹{spot?.spotPricePerHour}</span>
+              <span className="font-semibold text-gray-700">Total Duration</span>
+              <span className="text-gray-900 font-medium">
+                {duration} Hour{duration > 1 ? 's' : ''}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* PRICE SUMMARY CARD */}
-        <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-6 h-fit sticky top-6">
-          <h3 className="text-lg font-bold mb-4 text-blue-900">Price Summary</h3>
+        {/* RIGHT: PRICE SUMMARY */}
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-6 h-fit sticky top-6">
+          <h3 className="text-lg font-bold mb-4 text-blue-900">Summary</h3>
 
-          <div className="space-y-3 mb-4 pb-4 border-b border-blue-200">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-700">Hourly Rate</span>
+          <div className="space-y-3 mb-4 pb-4 border-b border-blue-200 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Hourly Rate</span>
               <span className="font-medium">₹{spot?.spotPricePerHour}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-700">× {duration} Hour{duration > 1 ? 's' : ''}</span>
-              <span className="font-medium">₹{spot?.spotPricePerHour * duration}</span>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Slots Selected</span>
+              <span className="font-medium">{duration}</span>
             </div>
           </div>
 
-          <div className="text-xl font-bold text-blue-700 mb-6">
+          <div className="text-2xl font-extrabold text-blue-700 mb-6">
             Total: ₹{totalPrice}
           </div>
 
-          {/* ACTIONS */}
-          <div className="space-y-3 flex flex-col">
-            <button
-              onClick={() => navigate(-1)}
-              className="px-6 py-3 rounded-lg border-2 border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition flex items-center justify-center gap-2"
-            >
-              <FiArrowLeft /> Back to Booking
+          <div className="flex flex-col gap-3">
+            <button className="w-full py-3 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-md transition">
+              Confirm & Pay
             </button>
 
             <button
-              className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow-md"
+              onClick={() => navigate(-1)}
+              className="w-full py-3 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-50 transition flex items-center justify-center gap-2"
             >
-              ✓ Proceed to Payment
+              <FiArrowLeft /> Edit Selections
             </button>
 
             <button
               onClick={handleRemoveFromCart}
-              className="px-6 py-3 rounded-lg border-2 border-red-600 text-red-600 font-semibold hover:bg-red-50 transition flex items-center justify-center gap-2"
+              className="mt-2 w-full py-2 text-red-500 text-sm font-medium hover:underline flex items-center justify-center gap-1"
             >
-              <FiTrash2 /> Remove from Cart
+              <FiTrash2 size={14} /> Clear Cart
             </button>
           </div>
         </div>

@@ -1,11 +1,14 @@
 import axios from "axios";
 
-const axiosClient = axios.create({
-  baseURL: "http://localhost:8181",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: false,
-});
+const baseURL = process.env.NODE_ENV === 'development' 
+  ? '' // In development, proxy in package.json handles routing to localhost:8181
+  : 'http://localhost:8181'; // In production, use absolute URL
 
-export default axiosClient;
+export default axios.create({
+  baseURL: baseURL,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+});

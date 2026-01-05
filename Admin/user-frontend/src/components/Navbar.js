@@ -19,7 +19,7 @@ export default function Navbar() {
             <Link to="/" className="navbar-link">
               Home
             </Link>
-            <div className="navbar-dropdown">
+            {/* <div className="navbar-dropdown">
               <button className="navbar-dropdown-button">
                 <span>Services</span>
                 <svg className="navbar-dropdown-icon" fill="currentColor" viewBox="0 0 20 20">
@@ -30,7 +30,7 @@ export default function Navbar() {
                 <Link to="/categories" className="navbar-dropdown-item">Categories</Link>
                 <Link to="/venues" className="navbar-dropdown-item">Venues</Link>
               </div>
-            </div>
+            </div> */}
             <Link to="/about" className="navbar-link">
               About
             </Link>

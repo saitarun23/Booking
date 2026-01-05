@@ -6,6 +6,8 @@ import SubServices from "./pages/SubServices";
 import Venues from "./pages/Venues";
 import Booking from "./pages/Booking";
 import Cart from "./pages/Cart";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 export default function App() {
   return (
@@ -18,6 +20,9 @@ export default function App() {
           <Route path="/service/:id" element={<Venues />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          
         </Routes>
       </div>
       <Footer />

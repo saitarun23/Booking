@@ -1,5 +1,6 @@
 package backend.com.entity;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,4 +35,6 @@ public class SubService {
 	@ManyToOne
 	@JoinColumn(name="category_id", nullable=false)
 	private Category category;
+	
+
 }
