@@ -11,7 +11,6 @@ export default function Categories() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const nav = useNavigate();
 
   useEffect(() => {

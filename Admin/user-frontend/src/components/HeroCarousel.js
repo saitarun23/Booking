@@ -7,9 +7,10 @@ import "../styles/heroCarousel.css";
 import hero1 from "../assets/hero1.png";
 import hero2 from "../assets/hero2.png";
 import hero3 from "../assets/hero3.png";
+import hero4 from "../assets/hero4.png";
 
 export default function HeroCarousel({ images }) {
-  const defaultImages = [hero1, hero2, hero3];
+  const defaultImages = [hero1, hero2, hero3, hero4];
 
   const imagesToDisplay = images && images.length > 0 ? images : defaultImages;
 
@@ -18,7 +19,7 @@ export default function HeroCarousel({ images }) {
       modules={[Navigation, Pagination, Autoplay]}
       navigation
       pagination={{ clickable: true }}
-      autoplay={{ delay: 5000, disableOnInteraction: false }}
+      autoplay={{ delay: 2800, disableOnInteraction: false }}
       loop={true}
       className="hero-carousel"
     >
