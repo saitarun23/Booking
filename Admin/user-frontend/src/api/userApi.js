@@ -45,6 +45,9 @@ export const getSpots = (venueId) =>
 export const getSlots = (spotId, date) =>
   API.get(`/slots/${spotId}?date=${date}`);
 
+export const getSpotImages = (spotId) =>
+  API.get(`/spot-images/${spotId}`);
+
 export const checkAvailability = (spotId, date, startTime, endTime) =>
   API.get(`/slot/check-availability?spotId=${spotId}&date=${date}&startTime=${startTime}&endTime=${endTime}`);
 

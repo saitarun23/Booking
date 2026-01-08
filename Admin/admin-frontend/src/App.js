@@ -5,6 +5,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import SubServices from "./pages/SubServices";
 import Venues from "./pages/Venues";
 import Spots from "./pages/Spots";
+import SpotImages from "./pages/SpotImages";
 import Slots from "./pages/Slots";
 import './App.css';
 
@@ -65,7 +66,15 @@ function App() {
             }
           />
 
-          
+            <Route
+            path="/spotimages"
+            element={
+              <ProtectedRoute>
+                <SpotImages />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/slots"
             element={

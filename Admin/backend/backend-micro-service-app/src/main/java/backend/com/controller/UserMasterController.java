@@ -11,12 +11,14 @@ import backend.com.entity.Category;
 import backend.com.entity.SubService;
 import backend.com.entity.Venue;
 import backend.com.entity.Spot;
+import backend.com.entity.SpotImage;
 import backend.com.entity.Slot;
 import backend.com.repository.CategoryRepository;
 import backend.com.repository.SubServiceRepository;
 import backend.com.repository.VenueRepository;
 import backend.com.repository.SpotRepository;
 import backend.com.repository.SlotRepository;
+import backend.com.repository.SpotImageRepository;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,6 +31,7 @@ public class UserMasterController {
 	private final SubServiceRepository subServiceRepo;
 	private final VenueRepository venueRepo;
 	private final SpotRepository spotRepo;
+	private final SpotImageRepository spotImageRepo;
 	private final SlotRepository slotRepo;
 
 	/* -------------------- CATEGORIES -------------------- */
@@ -55,6 +58,13 @@ public class UserMasterController {
 		return spotRepo.findByVenue_VenueId(venueId);
 	}
 
+	/* -------------------- ✅ SPOT IMAGES -------------------- */
+    @GetMapping("/spot-images/{spotId}")
+    public List<SpotImage> getSpotImages(@PathVariable int spotId) {
+        // This will return the List of SpotImage objects (including the Base64 String)
+        return spotImageRepo.findBySpot_SpotId(spotId);
+    }
+    
 	/* -------------------- ✅ AVAILABLE SLOTS (FIXED) -------------------- */
 	@GetMapping("/slots/{spotId}")
 	public List<Slot> getSlots(@PathVariable int spotId, @RequestParam String date) {

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { getSpots, getSlots } from "../api/userApi";
+import { getSpots, getSlots, getSpotImages } from "../api/userApi"; // Added getSpotImages
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FiShoppingCart,
   FiMapPin,
   FiCalendar,
   FiClock,
+  FiChevronLeft,
+  FiChevronRight,
 } from "react-icons/fi";
 
 /* --------- UTILS --------- */
@@ -59,11 +61,27 @@ export default function Booking() {
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [selectedSlots, setSelectedSlots] = useState([]);
 
+  /* -------- IMAGE PREVIEW STATES -------- */
+  const [images, setImages] = useState([]);
+  const [currentImgIndex, setCurrentImgIndex] = useState(0);
+
   /* -------- FETCH SPOTS -------- */
   useEffect(() => {
     if (!id) return;
     getSpots(id).then((res) => setSpots(res.data || []));
   }, [id]);
+
+  /* -------- FETCH IMAGES FOR SELECTED SPOT -------- */
+  useEffect(() => {
+    if (!spotId) {
+      setImages([]);
+      return;
+    }
+    getSpotImages(spotId).then((res) => {
+      setImages(res.data || []);
+      setCurrentImgIndex(0); // Reset to first image
+    });
+  }, [spotId]);
 
   /* -------- FETCH SLOTS -------- */
   useEffect(() => {
@@ -87,6 +105,15 @@ export default function Booking() {
       generateTimeSlots(slot.slotStartTime, slot.slotEndTime, date)
     );
   }, [slotsFromBackend, date]);
+
+  /* -------- IMAGE CAROUSEL LOGIC -------- */
+  const nextImage = () => {
+    setCurrentImgIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImage = () => {
+    setCurrentImgIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
 
   /* -------- SLOT TOGGLE LOGIC -------- */
   const handleSlotClick = (slot) => {
@@ -118,7 +145,6 @@ export default function Booking() {
       return;
     }
 
-    // Sort slots to maintain chronological order in cart
     const sortedSlots = [...selectedSlots].sort(
       (a, b) => a.start - b.start
     );
@@ -133,7 +159,7 @@ export default function Booking() {
         date,
         startTime,
         endTime,
-        selectedSlots: sortedSlots, // IMPORTANT: Passing the full array
+        selectedSlots: sortedSlots,
         duration: selectedSlots.length,
         totalPrice,
       },
@@ -159,10 +185,9 @@ export default function Booking() {
           <select
             value={spotId}
             onChange={(e) => {
-              const spot = spots.find(
-                (s) => s.spotId === Number(e.target.value)
-              );
-              setSpotId(e.target.value);
+              const idVal = Number(e.target.value);
+              const spot = spots.find((s) => s.spotId === idVal);
+              setSpotId(idVal);
               setSelectedSpot(spot);
               setVenue(spot?.venue);
             }}
@@ -190,7 +215,7 @@ export default function Booking() {
             className="w-full border p-3 rounded"
           />
         </div>
-        
+
         {/* TIME SLOTS SELECTION */}
         <div className="mb-6">
           <label className="font-semibold block mb-2 flex items-center gap-2">
@@ -209,6 +234,7 @@ export default function Booking() {
                 return (
                   <button
                     key={idx}
+                    type="button"
                     onClick={() => handleSlotClick(slot)}
                     className={`border rounded-lg py-2 text-sm font-medium transition ${
                       isSelected
@@ -224,14 +250,12 @@ export default function Booking() {
           )}
         </div>
 
-        {/* TOTAL PRICE SUMMARY */}
         {selectedSlots.length > 0 && (
           <div className="mb-6 text-lg font-semibold text-blue-700">
             Total Price: ₹{totalPrice}
           </div>
         )}
 
-        {/* ADD TO CART BUTTON */}
         <button
           onClick={handleAddToCart}
           disabled={!spotId || selectedSlots.length === 0}
@@ -245,9 +269,55 @@ export default function Booking() {
         </button>
       </div>
 
-      {/* RIGHT PREVIEW (Placeholder) */}
-      <div className="flex-1 bg-gray-50 border border-dashed rounded-xl flex items-center justify-center">
-        <p className="text-gray-400 font-medium">Image Preview Area</p>
+      {/* RIGHT PREVIEW (Updated Image Gallery Area) */}
+      <div className="flex-1 bg-gray-100 border rounded-xl flex items-center justify-center relative group min-h-[400px]">
+        {images.length > 0 ? (
+          <>
+            {/* Image display */}
+            <img
+              src={`data:image/jpeg;base64,${images[currentImgIndex].imageData}`}
+              alt="Spot Preview"
+              className="w-full h-full object-cover rounded-xl"
+            />
+
+            {/* Carousel Controls (Arrows) */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-4 p-2 bg-white/80 rounded-full shadow hover:bg-white transition"
+                >
+                  <FiChevronLeft size={24} className="text-gray-800" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-4 p-2 bg-white/80 rounded-full shadow hover:bg-white transition"
+                >
+                  <FiChevronRight size={24} className="text-gray-800" />
+                </button>
+
+                {/* Dots indicator */}
+                <div className="absolute bottom-4 flex gap-2">
+                  {images.map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={`h-2 w-2 rounded-full transition-all ${
+                        idx === currentImgIndex ? "bg-blue-600 w-4" : "bg-white/70"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        ) : (
+          <div className="text-center">
+            <FiCalendar size={40} className="mx-auto text-gray-300 mb-2" />
+            <p className="text-gray-400 font-medium">
+              {spotId ? "No images available for this court" : "Select a court to view photos"}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
