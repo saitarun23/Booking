@@ -1,0 +1,139 @@
+/* =========================
+   FOOD ITEMS PAGE
+========================= */
+
+.food-wrapper {
+  max-width: 1200px;
+  margin: auto;
+  padding: 1.5rem;
+  background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
+  min-height: 100vh;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #2563eb; /* blue accent */
+  cursor: pointer;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+/* TITLE */
+.food-title {
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 2.5rem;
+  letter-spacing: -0.5px;
+}
+
+/* LOADING */
+.food-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #4b5563;
+}
+
+/* GRID */
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* CARD */
+.food-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e7eb;
+}
+
+.food-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(37, 99, 235, 0.18);
+}
+
+/* IMAGE */
+.food-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+
+/* FOOD NAME */
+.food-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+/* DESCRIPTION */
+.food-card p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+  flex-grow: 1;
+}
+
+/* PRICE */
+.food-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2563eb; /* primary blue */
+  margin-bottom: 0.75rem;
+}
+
+/* BUTTON */
+.add-cart-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: none;
+  color: #ffffff;
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.add-cart-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  transform: scale(1.03);
+}
+
+/* EMPTY STATE */
+.food-wrapper p {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .food-title {
+    font-size: 1.6rem;
+  }
+
+  .food-card img {
+    height: 150px;
+  }
+}

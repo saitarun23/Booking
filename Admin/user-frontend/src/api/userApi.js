@@ -36,6 +36,9 @@ export const getCategories = () => API.get("/categories");
 export const getSubServices = (categoryId) =>
   API.get(`/subservices/${categoryId}`);
 
+export const getFoodItems = (serviceId) =>
+  API.get(`/food-items/${serviceId}`);
+
 export const getVenues = (serviceId) =>
   API.get(`/venues/${serviceId}`);
 

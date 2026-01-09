@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -27,16 +28,20 @@ public class FoodItem {
     private String foodDescription;
 
     @Column(name = "foodquantity_regular", nullable = false)
-    private int foodQuantityRegular;
+    private String foodQuantityRegular;
     
     @Column(name = "foodquantity_large", nullable = false)
-    private int foodQuantityLarge;
+    private String foodQuantityLarge;
     
     @Column(name = "foodprice_regular", nullable = false)
     private Double foodPriceRegular;
     
     @Column(name = "foodprice_large", nullable = false)
     private Double foodPriceLarge;
+    
+	@Lob
+	@Column(name="fooditem_image", columnDefinition = "LONGTEXT")
+	private String image;
 
     @Column(name = "available")
     private boolean available = true;

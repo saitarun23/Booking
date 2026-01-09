@@ -55,6 +55,7 @@ public class FoodItemService {
 			fi.setFoodPriceRegular(foodItem.getFoodPriceRegular());
 			fi.setFoodPriceLarge(foodItem.getFoodPriceLarge());
 			fi.setAvailable(foodItem.isAvailable());
+			fi.setImage(foodItem.getImage());
 			fi.setSubService(foodItem.getSubService());
 			foodItemRepository.saveAndFlush(fi);
 			return "FoodItem Updated Successfully";

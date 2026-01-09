@@ -7,6 +7,7 @@ export default function Sidebar() {
   const menuItems = [
     { path: "/categories", label: "Categories", icon: "📁" },
     { path: "/subservices", label: "Sub-Services", icon: "🔧" },
+    { path: "/fooditems", label: "Food Items", icon: "🍔" },
     { path: "/venues", label: "Venues", icon: "🏟️" },
     { path: "/spots", label: "Spots", icon: "📍" },
     { path: "/spotimages", label: "Spot Images", icon: "🖼️" },

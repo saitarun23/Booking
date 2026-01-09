@@ -1,0 +1,147 @@
+/* ===== Wrapper ===== */
+.food-cart-wrapper {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.food-cart-wrapper h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 32px;
+}
+
+/* ===== Empty Cart ===== */
+.empty-cart {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-cart h2 {
+  margin-bottom: 20px;
+}
+
+.empty-cart button {
+  padding: 10px 20px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===== Cart Item Card ===== */
+.food-cart-item {
+  display: grid;
+  grid-template-columns: 120px 1fr 140px 120px;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  margin-bottom: 18px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Food Image ===== */
+.food-cart-item img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* ===== Food Info ===== */
+.food-cart-info h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.food-cart-info p {
+  margin: 4px 0;
+  color: #555;
+  font-size: 15px;
+}
+
+/* ===== Quantity Controls ===== */
+.food-cart-qty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #f7f7f7;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.food-cart-qty button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.food-cart-qty span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* ===== Item Total ===== */
+.food-cart-total {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+}
+
+/* ===== Footer ===== */
+.food-cart-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #eee;
+}
+
+.food-cart-footer h2 {
+  font-size: 26px;
+}
+
+.checkout-btn {
+  padding: 14px 28px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .food-cart-item {
+    grid-template-columns: 100px 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .food-cart-qty {
+    justify-content: flex-start;
+  }
+
+  .food-cart-total {
+    text-align: left;
+    margin-top: 10px;
+  }
+}

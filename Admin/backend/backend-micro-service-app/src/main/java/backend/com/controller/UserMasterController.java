@@ -8,12 +8,14 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.*;
 
 import backend.com.entity.Category;
+import backend.com.entity.FoodItem;
 import backend.com.entity.SubService;
 import backend.com.entity.Venue;
 import backend.com.entity.Spot;
 import backend.com.entity.SpotImage;
 import backend.com.entity.Slot;
 import backend.com.repository.CategoryRepository;
+import backend.com.repository.FoodItemRepository;
 import backend.com.repository.SubServiceRepository;
 import backend.com.repository.VenueRepository;
 import backend.com.repository.SpotRepository;
@@ -29,6 +31,7 @@ public class UserMasterController {
 
 	private final CategoryRepository categoryRepo;
 	private final SubServiceRepository subServiceRepo;
+	private final FoodItemRepository foodItemRepo;
 	private final VenueRepository venueRepo;
 	private final SpotRepository spotRepo;
 	private final SpotImageRepository spotImageRepo;
@@ -44,6 +47,12 @@ public class UserMasterController {
 	@GetMapping("/subservices/{categoryId}")
 	public List<SubService> getSubServices(@PathVariable int categoryId) {
 		return subServiceRepo.findByCategory_CategoryId(categoryId);
+	}
+	
+	/* -------------------- Food Items -------------------- */
+	@GetMapping("food-items/{serviceId}")
+	public List<FoodItem> getFoodItems(@PathVariable int serviceId){
+		return foodItemRepo.findBySubService_ServiceId(serviceId);
 	}
 
 	/* -------------------- VENUES -------------------- */

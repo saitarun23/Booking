@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Categories from "./pages/Categories";
 import ProtectedRoute from "./ProtectedRoute";
 import SubServices from "./pages/SubServices";
+import FoodItems from "./pages/FoodItems";
 import Venues from "./pages/Venues";
 import Spots from "./pages/Spots";
 import SpotImages from "./pages/SpotImages";
@@ -46,7 +47,14 @@ function App() {
             } 
           />
 
-         
+          <Route 
+            path="/fooditems" 
+            element={
+              <ProtectedRoute>
+                <FoodItems />
+              </ProtectedRoute>
+            } 
+          />
           
           <Route 
             path="/venues" 

@@ -128,7 +128,17 @@ export default function SubServices() {
                   name: srv.serviceName,
                   description: srv.serviceDescription,
                 }}
-                onClick={() => nav(`/service/${srv.serviceId}`)}
+                onClick={() => {
+                  const isFood =
+                    srv.serviceName.toLowerCase().includes("veg") ||
+                    srv.serviceName.toLowerCase().includes("food");
+
+                  if (isFood) {
+                    nav(`/food/${srv.serviceId}`);   // 🍔 FOOD FLOW
+                  } else {
+                    nav(`/service/${srv.serviceId}`); // 🏟 VENUE FLOW
+                  }
+                }}
               />
             ))}
           </div>
