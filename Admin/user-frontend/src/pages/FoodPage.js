@@ -20,7 +20,7 @@ export default function FoodPage() {
   const [loadingItems, setLoadingItems] = useState(false);
 
   const [cartCount, setCartCount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0); // 💰 total price
+  const [cartTotal, setCartTotal] = useState(0);
 
   // Swiggy-style MENU overlay
   const [showMenuOverlay, setShowMenuOverlay] = useState(false);
@@ -163,22 +163,17 @@ export default function FoodPage() {
 
   return (
     <div className="food-page">
-      {/* HEADER */}
+      {/* HEADER – centered like real food apps */}
       <header className="food-header">
-        <button className="food-back-btn" onClick={() => nav(-1)}>
-          ← Back
-        </button>
-        <div>
+        <div className="food-header-main">
           <h1 className="food-title">Menu</h1>
           <p className="food-subtitle">Choose your favourites</p>
+          <p className="food-header-meta">
+            {selectedType ? selectedType.foodTypeName : "All"} ·{" "}
+            {selectedMenu ? selectedMenu.foodMenuName : "All sections"}
+          </p>
         </div>
       </header>
-
-      {/* Line showing current selection */}
-      <p className="food-current-filter">
-        {selectedType ? selectedType.foodTypeName : "All"} ·{" "}
-        {selectedMenu ? selectedMenu.foodMenuName : "All sections"}
-      </p>
 
       {/* DISH LIST */}
       <main className="food-items-list">
@@ -231,7 +226,7 @@ export default function FoodPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="food-overlay-header">
-              <span>Menu</span>
+              <span>Browse Menu</span>
             </div>
 
             <div className="food-overlay-section">
