@@ -45,17 +45,42 @@
   text-decoration: underline;
 }
 
-/* Main Content Layout */
+/* ============================
+   MAIN CONTENT LAYOUT
+   Desktop: image left, sidebar right
+   Mobile: sidebar first, then image
+============================ */
+
 .venue-content {
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: minmax(0, 2.1fr) minmax(320px, 1fr);
+  grid-template-areas: "main sidebar";
   gap: 2rem;
   margin-bottom: 2rem;
 }
 
-@media (max-width: 1024px) {
+.venue-main-column {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.venue-sidebar {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---------- Mobile: Book Now on top ---------- */
+@media (max-width: 768px) {
   .venue-content {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "sidebar"   /* Book Now + info FIRST */
+      "main";     /* gallery + details BELOW */
+    row-gap: 1.5rem;
   }
 }
 
@@ -139,14 +164,7 @@
   right: 1rem;
 }
 
-/* Sidebar */
-.venue-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* Book Now Button */
+/* Sidebar / Book Now */
 .venue-book-btn {
   width: 100%;
   padding: 1rem;
@@ -171,43 +189,16 @@
   transform: translateY(0);
 }
 
-/* Book Now Button - Gradient Variant */
+/* Gradient variant */
 .venue-book-btn-gradient {
   background: linear-gradient(to right, #2563eb, #3b82f6);
   box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.3);
 }
 
 .venue-book-btn-gradient:hover {
-  background: linear-gradient(to right, #1d4ed8,  );
+  background: linear-gradient(to right, #1d4ed8, #2563eb);
   transform: translateY(-2px);
   box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.4);
-}
-
-/* Actions */
-.venue-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.venue-action-btn {
-  flex: 1;
-  padding: 0.75rem;
-  border: 2px solid #16a34a;
-  background-color: #ffffff;
-  color: #16a34a;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.venue-action-btn:hover {
-  background-color: #f0fdf4;
 }
 
 /* Venue Info Card */
@@ -258,9 +249,7 @@
   margin: 0;
 }
 
-
-
-/* Timing and Location */
+/* Timing / Location grid etc. */
 .venue-details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -360,7 +349,14 @@
   font-size: 0.875rem;
 }
 
-/* Amenities Section */
+/* Amenities */
+.amenities-box {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 2rem;
+}
+
 .amenities-box h3 {
   font-size: 18px;
   font-weight: 600;
@@ -370,14 +366,6 @@
   display: flex;
   justify-content: center;
   border-bottom: 1px solid #e5e7eb;
-}
-
-
-.amenities-box {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 2rem;
 }
 
 .amenities-list {
@@ -397,7 +385,6 @@
   color: green;
   font-weight: bold;
 }
-
 
 /* About Section */
 .venue-about-section {
@@ -471,7 +458,7 @@
   font-size: 0.95rem;
 }
 
-/* Loading State */
+/* Loading / Error (unchanged) */
 .venue-loading {
   display: flex;
   justify-content: center;
@@ -506,7 +493,6 @@
   font-weight: 500;
 }
 
-/* Error State */
 .venue-error {
   background-color: #fef2f2;
   border-left: 4px solid #ef4444;
@@ -539,7 +525,7 @@
   font-size: 0.875rem;
 }
 
-/* Responsive */
+/* Extra mobile tweaks */
 @media (max-width: 768px) {
   .venue-title {
     font-size: 1.75rem;
@@ -549,9 +535,8 @@
     height: 250px;
   }
 
-  .venue-details-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  .venue-location-map {
+    height: 220px;
   }
 
   .venue-sports-grid {

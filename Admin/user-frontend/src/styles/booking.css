@@ -1,0 +1,251 @@
+/* ================================
+   BOOKING PAGE LAYOUT
+================================ */
+
+.booking-wrapper {
+  max-width: 1210px;
+  margin: auto;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px; /* gallery | card */
+  grid-template-areas: "gallery card";
+  gap: 2rem;
+}
+
+/* card & gallery areas */
+.booking-card {
+  grid-area: card;
+}
+
+.booking-gallery {
+  grid-area: gallery;
+}
+
+@media (max-width: 900px) {
+  .booking-wrapper {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "card"
+      "gallery"; /* mobile: card on top, gallery below */
+  }
+}
+
+/* ================================
+   CARD STYLES
+================================ */
+
+.booking-card {
+  background: #fff;
+  padding: 1.8rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.booking-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.booking-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.booking-select,
+.booking-date {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 18px;
+  font-size: 15px;
+}
+
+/* ================================
+   SLOT SELECTION
+================================ */
+
+.slot-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.no-slots {
+  color: #9ca3af;
+}
+
+.slot-btn {
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.slot-btn:hover {
+  border-color: #05dd46;
+}
+
+.slot-selected {
+  background: #30a900;
+  border-color: #05dd46;
+  color: white;
+}
+
+/* ❌ Disabled past slots */
+.slot-disabled {
+  background: #e5e7eb !important;
+  border-color: #d1d5db !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.slot-disabled:hover {
+  border-color: #d1d5db !important;
+  background: #e5e7eb !important;
+}
+
+/* ================================
+   PRICE & BUTTON
+================================ */
+
+.total-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #30a900;
+  margin-bottom: 16px;
+}
+
+.add-cart-btn {
+  width: 100%;
+  background: #30a900;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-cart-btn:hover {
+  background: #30a900;
+}
+
+.add-cart-btn.disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* ================================
+   IMAGE GALLERY
+================================ */
+
+.booking-gallery {
+  background: #f3f4f6;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  height: 490px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-arrow.left {
+  left: 15px;
+}
+.gallery-arrow.right {
+  right: 15px;
+}
+
+.gallery-dots {
+  position: absolute;
+  bottom: 15px;
+  display: flex;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.dot.active {
+  width: 22px;
+  background: #2563eb;
+  border-radius: 6px;
+}
+
+/* NO IMAGE MESSAGE */
+
+.no-image-box {
+  text-align: center;
+  color: #6b7280;
+}
+
+.no-img-icon {
+  color: #d1d5db;
+}
+
+/* ================================
+   RESPONSIVE TWEAKS
+================================ */
+
+@media (max-width: 768px) {
+  .booking-wrapper {
+    padding: 1.5rem 1rem;
+  }
+
+  .booking-gallery {
+    height: 280px;
+  }
+
+  .slot-box {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .booking-gallery {
+    height: 360px;
+  }
+}

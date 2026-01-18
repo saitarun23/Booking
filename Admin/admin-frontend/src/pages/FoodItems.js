@@ -4,19 +4,14 @@ import axiosClient from "../api/axiosClient";
 
 export default function FoodItems() {
   const [foodItems, setFoodItems] = useState([]);
-  const [subServices, setSubServices] = useState([]);
+  const [foodMenus, setFoodMenus] = useState([]);
 
-  const [foodId, setFoodId] = useState("");
-  const [foodName, setFoodName] = useState("");
-  const [foodDescription, setFoodDescription] = useState("");
-  const [foodQuantityRegular, setFoodQuantityRegular] = useState("");
-  const [foodQuantityLarge, setFoodQuantityLarge] = useState("");
-  const [foodPriceRegular, setFoodPriceRegular] = useState("");
-  const [foodPriceLarge, setFoodPriceLarge] = useState("");
+  // States precisely mapped to backend Entity: FoodItem.java
+  const [foodItemId, setFoodItemId] = useState("");
+  const [foodItemName, setFoodItemName] = useState("");
+  const [foodItemDescription, setFoodItemDescription] = useState("");
   const [available, setAvailable] = useState(true);
-  const [serviceId, setServiceId] = useState("");
-
-  /* IMAGE */
+  const [foodMenuId, setFoodMenuId] = useState(""); 
   const [foodImage, setFoodImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -24,299 +19,242 @@ export default function FoodItems() {
 
   /* ================= LOAD DATA ================= */
 
-  const loadFoodItems = async () => {
-    const res = await axiosClient.get("/fooditem/findAll_fooditem");
-    setFoodItems(res.data);
-  };
+  const loadData = async () => {
+    try {
+      const resItems = await axiosClient.get("/fooditem/findAll_fooditem");
+      setFoodItems(resItems.data);
 
-  const loadSubServices = async () => {
-    const res = await axiosClient.get("/subservice/findAll_subservice");
-    setSubServices(res.data);
+      // Assuming your FoodMenu controller has this endpoint
+      const resMenus = await axiosClient.get("/foodmenu/findAll_foodmenu");
+      setFoodMenus(resMenus.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
   };
 
   useEffect(() => {
-    loadFoodItems();
-    loadSubServices();
+    loadData();
   }, []);
 
-  /* ================= IMAGE ================= */
+  /* ================= IMAGE LOGIC ================= */
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      alert("Please upload an image file");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image must be less than 5MB");
-      return;
-    }
-
     setFoodImage(file);
-
     const reader = new FileReader();
     reader.onload = () => setImagePreview(reader.result);
     reader.readAsDataURL(file);
   };
 
   const convertToBase64 = (file) =>
-    new Promise((resolve) => {
+    new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result.split(",")[1]);
       reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = (error) => reject(error);
     });
 
-  /* ================= CLEAR ================= */
+  /* ================= FORM ACTIONS ================= */
 
   const clearForm = () => {
-    setFoodId("");
-    setFoodName("");
-    setFoodDescription("");
-    setFoodQuantityRegular("");
-    setFoodQuantityLarge("");
-    setFoodPriceRegular("");
-    setFoodPriceLarge("");
+    setFoodItemId("");
+    setFoodItemName("");
+    setFoodItemDescription("");
     setAvailable(true);
-    setServiceId("");
+    setFoodMenuId("");
     setFoodImage(null);
     setImagePreview(null);
     setIsEdit(false);
   };
 
-  /* ================= ADD ================= */
-
   const addFoodItem = async () => {
-    if (
-      !foodName.trim() ||
-      !serviceId ||
-      !foodQuantityRegular.trim() ||
-      !foodQuantityLarge.trim() ||
-      !foodPriceRegular ||
-      !foodPriceLarge
-    ) {
-      alert("Please fill all required fields");
+    if (!foodItemName.trim() || !foodMenuId) {
+      alert("Please enter a Name and select a Food Menu");
       return;
     }
 
     let imageBase64 = null;
     if (foodImage) imageBase64 = await convertToBase64(foodImage);
 
-    await axiosClient.post("/fooditem/add_fooditem", {
-      foodName,
-      foodDescription,
-      foodQuantityRegular,
-      foodQuantityLarge,
-      foodPriceRegular,
-      foodPriceLarge,
+    const payload = {
+      foodItemName,
+      foodItemDescription,
       available,
       image: imageBase64,
-      subService: { serviceId },
-    });
-
-    alert("Food item added");
-    clearForm();
-    loadFoodItems();
-  };
-
-  /* ================= UPDATE ================= */
-
-  const updateFoodItem = async () => {
-    const payload = {
-      foodId,
-      foodName,
-      foodDescription,
-      foodQuantityRegular,
-      foodQuantityLarge,
-      foodPriceRegular,
-      foodPriceLarge,
-      available,
-      subService: { serviceId },
+      foodMenu: { foodMenuId: parseInt(foodMenuId) } // Matches @JoinColumn(name="foodmenu_id")
     };
 
-    if (foodImage) {
-      if (foodImage.existingImage) {
-        payload.image = foodImage.existingImage;
-      } else {
-        payload.image = await convertToBase64(foodImage);
-      }
+    try {
+      const res = await axiosClient.post("/fooditem/add_fooditem", payload);
+      alert(res.data); // Shows "FoodItem Stored Successfully" from backend
+      clearForm();
+      loadData();
+    } catch (err) {
+      alert("Error adding food item");
     }
-
-    await axiosClient.put("/fooditem/update_fooditem", payload);
-
-    alert("Food item updated");
-    clearForm();
-    loadFoodItems();
   };
 
-  /* ================= EDIT ================= */
+  const updateFoodItem = async () => {
+    let imageBase64 = foodImage?.existingImage || null;
+    
+    // If user uploaded a NEW file during edit
+    if (foodImage instanceof File) {
+      imageBase64 = await convertToBase64(foodImage);
+    }
+
+    const payload = {
+      foodItemId, // Required for .findById() in backend update logic
+      foodItemName,
+      foodItemDescription,
+      available,
+      image: imageBase64,
+      foodMenu: { foodMenuId: parseInt(foodMenuId) }
+    };
+
+    try {
+      const res = await axiosClient.put("/fooditem/update_fooditem", payload);
+      alert(res.data); // Shows "FoodItem Updated Successfully"
+      clearForm();
+      loadData();
+    } catch (err) {
+      alert("Error updating food item");
+    }
+  };
 
   const editFoodItem = (f) => {
     setIsEdit(true);
-    setFoodId(f.foodId);
-    setFoodName(f.foodName);
-    setFoodDescription(f.foodDescription);
-    setFoodQuantityRegular(f.foodQuantityRegular);
-    setFoodQuantityLarge(f.foodQuantityLarge);
-    setFoodPriceRegular(f.foodPriceRegular);
-    setFoodPriceLarge(f.foodPriceLarge);
+    setFoodItemId(f.foodItemId);
+    setFoodItemName(f.foodItemName);
+    setFoodItemDescription(f.foodItemDescription);
     setAvailable(f.available);
-    setServiceId(f.subService?.serviceId);
+    setFoodMenuId(f.foodMenu?.foodMenuId || "");
 
     if (f.image) {
       setImagePreview(`data:image/jpeg;base64,${f.image}`);
       setFoodImage({ existingImage: f.image });
+    } else {
+      setImagePreview(null);
+      setFoodImage(null);
     }
   };
 
-  /* ================= DELETE ================= */
-
   const deleteFoodItem = async (id) => {
-    if (!window.confirm("Delete this food item?")) return;
-    await axiosClient.delete(`/fooditem/delete_fooditem/${id}`);
-    loadFoodItems();
+    if (!window.confirm("Are you sure you want to delete this item?")) return;
+    try {
+      const res = await axiosClient.delete(`/fooditem/delete_fooditem/${id}`);
+      alert(res.data);
+      loadData();
+    } catch (err) {
+      alert("Error deleting item");
+    }
   };
 
-  /* ================= UI ================= */
+  /* ================= UI RENDER ================= */
 
   return (
     <div className="app-container">
       <Sidebar />
-
       <div className="main-content">
         <h2>Food Items Management</h2>
 
         <div className="card">
-          <h3>{isEdit ? "Edit Food Item" : "Add Food Item"}</h3>
-
-          <input
-            placeholder="Food Name"
-            value={foodName}
-            onChange={(e) => setFoodName(e.target.value)}
+          <h3>{isEdit ? "Update Food Item" : "Add New Food Item"}</h3>
+          
+          <input 
+            className="form-control"
+            placeholder="Food Item Name" 
+            value={foodItemName} 
+            onChange={(e) => setFoodItemName(e.target.value)} 
           />
-
-          <textarea
-            placeholder="Food Description"
-            value={foodDescription}
-            onChange={(e) => setFoodDescription(e.target.value)}
+          
+          <textarea 
+            className="form-control"
+            placeholder="Food Item Description" 
+            value={foodItemDescription} 
+            onChange={(e) => setFoodItemDescription(e.target.value)} 
           />
-
-          <select value={serviceId} onChange={(e) => setServiceId(e.target.value)}>
-            <option value="">Select Sub-Service</option>
-            {subServices.map((s) => (
-              <option key={s.serviceId} value={s.serviceId}>
-                {s.serviceName}
+          
+          <select 
+            className="form-control"
+            value={foodMenuId} 
+            onChange={(e) => setFoodMenuId(e.target.value)}
+          >
+            <option value="">-- Select Food Menu --</option>
+            {foodMenus.map((m) => (
+              <option key={m.foodMenuId} value={m.foodMenuId}>
+                {m.foodMenuName}
               </option>
             ))}
           </select>
 
-          <input
-            placeholder="Regular Quantity (eg: 250g / 1 plate)"
-            value={foodQuantityRegular}
-            onChange={(e) => setFoodQuantityRegular(e.target.value)}
-          />
+          <div className="image-section">
+            <label>Food Image:</label>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+            {imagePreview && (
+              <img src={imagePreview} alt="Preview" style={{ width: 100, marginTop: 10, borderRadius: 5 }} />
+            )}
+          </div>
 
-          <input
-            placeholder="Large Quantity (eg: 500g / 2 plates)"
-            value={foodQuantityLarge}
-            onChange={(e) => setFoodQuantityLarge(e.target.value)}
-          />
-
-          <input
-            type="number"
-            placeholder="Regular Price"
-            value={foodPriceRegular}
-            onChange={(e) => setFoodPriceRegular(e.target.value)}
-          />
-
-          <input
-            type="number"
-            placeholder="Large Price"
-            value={foodPriceLarge}
-            onChange={(e) => setFoodPriceLarge(e.target.value)}
-          />
-
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-
-          {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="Preview"
-              style={{ width: 120, marginTop: 10 }}
+          <label className="checkbox-label">
+            <input 
+              type="checkbox" 
+              checked={available} 
+              onChange={(e) => setAvailable(e.target.checked)} 
             />
-          )}
-
-          <label>
-            <input
-              type="checkbox"
-              checked={available}
-              onChange={(e) => setAvailable(e.target.checked)}
-            />
-            &nbsp; Available
+            &nbsp; Mark as Available
           </label>
 
-          <br />
-
-          {isEdit ? (
-            <>
-              <button className="btn" onClick={updateFoodItem}>Update</button>
-              <button className="btn-danger" onClick={clearForm}>Cancel</button>
-            </>
-          ) : (
-            <button className="btn" onClick={addFoodItem}>Add</button>
-          )}
+          <div className="button-group">
+            {isEdit ? (
+              <>
+                <button className="btn btn-primary" onClick={updateFoodItem}>Update</button>
+                <button className="btn-danger" onClick={clearForm}>Cancel</button>
+              </>
+            ) : (
+              <button className="btn btn-success" onClick={addFoodItem}>Save Food Item</button>
+            )}
+          </div>
         </div>
 
-        {/* TABLE */}
-        <table>
+        <table className="data-table">
           <thead>
             <tr>
-              <th>Food</th>
-              <th>Sub-Service</th>
-              <th>Regular Qty</th>
-              <th>Large Qty</th>
-              <th>Regular Price</th>
-              <th>Large Price</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Menu Category</th>
               <th>Available</th>
               <th>Image</th>
               <th>Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {foodItems.length > 0 ? (
               foodItems.map((f) => (
-                <tr key={f.foodId}>
-                  <td>{f.foodName}</td>
-                  <td>{f.subService?.serviceName}</td>
-                  <td>{f.foodQuantityRegular}</td>
-                  <td>{f.foodQuantityLarge}</td>
-                  <td>₹{f.foodPriceRegular}</td>
-                  <td>₹{f.foodPriceLarge}</td>
-                  <td>{f.available ? "Yes" : "No"}</td>
-                  <td>
-                    {f.image && (
-                      <img
-                        src={`data:image/jpeg;base64,${f.image}`}
-                        alt=""
-                        style={{ width: 60 }}
-                      />
+                <tr key={f.foodItemId}>
+                  <td>{f.foodItemId}</td>
+                  <td><strong>{f.foodItemName}</strong></td>
+                  <td>{f.foodItemDescription}</td>
+                  <td>{f.foodMenu?.foodMenuName || "N/A"}</td>
+                  <td>{f.available ? "✅ Yes" : "❌ No"}</td>
+                   <td>
+                    
+                    {f.image ? (
+                      <img src={`data:image/jpeg;base64,${f.image}`} alt="" style={{ width: 60, height: 40, objectFit: 'cover' }} />
+                    ) : (
+                      "No Image"
                     )}
                   </td>
                   <td>
-                    <button className="btn" onClick={() => editFoodItem(f)}>Edit</button>
-                    <button className="btn-danger" onClick={() => deleteFoodItem(f.foodId)}>Delete</button>
+                    <button className="btn-edit" onClick={() => editFoodItem(f)}>Edit</button>
+                    <button className="btn-delete" onClick={() => deleteFoodItem(f.foodItemId)}>Delete</button>
                   </td>
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan="9" style={{ textAlign: "center" }}>
-                  No Food Items Found
-                </td>
-              </tr>
+              <tr><td colSpan="6" style={{ textAlign: 'center' }}>No food items found.</td></tr>
             )}
           </tbody>
         </table>

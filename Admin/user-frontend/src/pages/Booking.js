@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { getSpots, getSlots, getSpotImages } from "../api/userApi"; // Added getSpotImages
+import { getSpots, getSlots, getSpotImages } from "../api/userApi";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FiShoppingCart,
-  FiMapPin,
   FiCalendar,
   FiClock,
   FiChevronLeft,
   FiChevronRight,
 } from "react-icons/fi";
+
+import "../styles/booking.css";
 
 /* --------- UTILS --------- */
 const formatTime = (date) =>
@@ -35,11 +36,7 @@ const generateTimeSlots = (startTime, endTime, selectedDate) => {
     const next = new Date(current.getTime() + 60 * 60 * 1000);
     if (next > end) break;
 
-    slots.push({
-      start: new Date(current),
-      end: new Date(next),
-    });
-
+    slots.push({ start: new Date(current), end: new Date(next) });
     current = next;
   }
 
@@ -61,29 +58,41 @@ export default function Booking() {
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [selectedSlots, setSelectedSlots] = useState([]);
 
-  /* -------- IMAGE PREVIEW STATES -------- */
   const [images, setImages] = useState([]);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
 
-  /* -------- FETCH SPOTS -------- */
+  /* ---------- FETCH SPOTS (COURTS) ---------- */
   useEffect(() => {
     if (!id) return;
-    getSpots(id).then((res) => setSpots(res.data || []));
+
+    getSpots(id).then((res) => {
+      const list = res.data || [];
+      setSpots(list);
+
+      // Auto-select FIRST court when data arrives
+      if (list.length > 0) {
+        const first = list[0];
+        setSpotId(first.spotId);
+        setSelectedSpot(first);
+        setVenue(first.venue);
+      }
+    });
   }, [id]);
 
-  /* -------- FETCH IMAGES FOR SELECTED SPOT -------- */
+  /* ---------- FETCH IMAGES FOR SELECTED COURT ---------- */
   useEffect(() => {
     if (!spotId) {
       setImages([]);
       return;
     }
+
     getSpotImages(spotId).then((res) => {
       setImages(res.data || []);
-      setCurrentImgIndex(0); // Reset to first image
+      setCurrentImgIndex(0);
     });
   }, [spotId]);
 
-  /* -------- FETCH SLOTS -------- */
+  /* ---------- FETCH SLOTS FOR SELECTED COURT + DATE ---------- */
   useEffect(() => {
     if (!spotId || !date) return;
 
@@ -93,7 +102,7 @@ export default function Booking() {
     });
   }, [spotId, date]);
 
-  /* -------- GENERATE UI SLOTS -------- */
+  /* ---------- BUILD UI SLOTS FROM BACKEND WINDOW ---------- */
   useEffect(() => {
     if (slotsFromBackend.length === 0) {
       setUiSlots([]);
@@ -101,208 +110,196 @@ export default function Booking() {
     }
 
     const slot = slotsFromBackend[0];
-    setUiSlots(
-      generateTimeSlots(slot.slotStartTime, slot.slotEndTime, date)
-    );
+    setUiSlots(generateTimeSlots(slot.slotStartTime, slot.slotEndTime, date));
   }, [slotsFromBackend, date]);
 
-  /* -------- IMAGE CAROUSEL LOGIC -------- */
+  /* ---------- CAROUSEL ---------- */
   const nextImage = () => {
-    setCurrentImgIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentImgIndex((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1
+    );
   };
 
   const prevImage = () => {
-    setCurrentImgIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentImgIndex((prev) =>
+      prev === 0 ? images.length - 1 : prev - 1
+    );
   };
 
-  /* -------- SLOT TOGGLE LOGIC -------- */
+  /* ---------- SLOT SELECTION ---------- */
   const handleSlotClick = (slot) => {
     setSelectedSlots((prev) => {
       const exists = prev.some(
         (s) => s.start.getTime() === slot.start.getTime()
       );
-
       if (exists) {
         return prev.filter(
           (s) => s.start.getTime() !== slot.start.getTime()
         );
       }
-
       return [...prev, slot];
     });
   };
 
-  /* -------- PRICE -------- */
+  /* ---------- PRICE ---------- */
   const totalPrice =
     selectedSpot && selectedSlots.length
       ? selectedSpot.spotPricePerHour * selectedSlots.length
       : 0;
 
-  /* -------- ADD TO CART -------- */
   const handleAddToCart = () => {
     if (!selectedSpot || selectedSlots.length === 0) {
-      alert("Please select court and time slots");
+      alert("Please select at least one time slot");
       return;
     }
 
-    const sortedSlots = [...selectedSlots].sort(
-      (a, b) => a.start - b.start
-    );
-
-    const startTime = sortedSlots[0].start;
-    const endTime = sortedSlots[sortedSlots.length - 1].end;
+    const sorted = [...selectedSlots].sort((a, b) => a.start - b.start);
 
     navigate("/cart", {
       state: {
         venue,
         spot: selectedSpot,
         date,
-        startTime,
-        endTime,
-        selectedSlots: sortedSlots,
-        duration: selectedSlots.length,
+        startTime: sorted[0].start,
+        endTime: sorted[sorted.length - 1].end,
+        selectedSlots: sorted,
+        duration: sorted.length,
         totalPrice,
       },
     });
   };
 
+  const now = new Date();
+  const isToday = date === today;
+
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8 flex flex-row-reverse gap-8">
-      {/* LEFT CARD (Booking Options) */}
-      <div className="w-[420px] bg-white border rounded-xl p-6 shadow-sm">
-        <h2 className="text-xl font-bold mb-1">
-          {venue?.venueName || "Select a court"}
+    <div className="booking-wrapper">
+      {/* RIGHT SIDE → Booking Panel */}
+      <div className="booking-card">
+        <h2 className="booking-title">
+          {venue?.venueName || "Select Court"}
         </h2>
 
-        <p className="text-gray-500 text-sm mb-4 flex items-center gap-1">
-          <FiMapPin size={14} />
-          {venue?.venueAddress || "Select a court to see address"}
-        </p>
-
         {/* COURT SELECT */}
-        <div className="mb-6">
-          <label className="font-semibold block mb-1">Court</label>
-          <select
-            value={spotId}
-            onChange={(e) => {
-              const idVal = Number(e.target.value);
-              const spot = spots.find((s) => s.spotId === idVal);
-              setSpotId(idVal);
-              setSelectedSpot(spot);
-              setVenue(spot?.venue);
-            }}
-            className="w-full border p-3 rounded"
-          >
-            <option value="">-- Select Court --</option>
-            {spots.map((spot) => (
+        <label className="booking-label">Court</label>
+        <select
+          className="booking-select"
+          value={spotId}
+          onChange={(e) => {
+            const val = Number(e.target.value);
+            const spot = spots.find((s) => s.spotId === val);
+            setSpotId(val);
+            setSelectedSpot(spot || null);
+            setVenue(spot?.venue || null);
+          }}
+        >
+          {spots.length === 0 && (
+            <option value="">No courts available</option>
+          )}
+          {spots.length > 0 &&
+            spots.map((spot) => (
               <option key={spot.spotId} value={spot.spotId}>
                 {spot.spotName} – ₹{spot.spotPricePerHour}/hr
               </option>
             ))}
-          </select>
-        </div>
+        </select>
 
-        {/* DATE SELECT */}
-        <div className="mb-4">
-          <label className="font-semibold block mb-1 flex items-center gap-2">
-            <FiCalendar size={16} /> Date
-          </label>
-          <input
-            type="date"
-            min={today}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full border p-3 rounded"
-          />
-        </div>
+        {/* DATE */}
+        <label className="booking-label">
+          <FiCalendar size={16} /> Date
+        </label>
+        <input
+          type="date"
+          min={today}
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="booking-date"
+        />
 
-        {/* TIME SLOTS SELECTION */}
-        <div className="mb-6">
-          <label className="font-semibold block mb-2 flex items-center gap-2">
-            <FiClock size={16} /> Select Time Slots
-          </label>
+        {/* TIME SLOTS */}
+        <label className="booking-label">
+          <FiClock size={16} /> Select Time Slots
+        </label>
 
+        <div className="slot-box">
           {uiSlots.length === 0 ? (
-            <p className="text-gray-400">No slots available</p>
+            <p className="no-slots">No slots available</p>
           ) : (
-            <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-1">
-              {uiSlots.map((slot, idx) => {
-                const isSelected = selectedSlots.some(
-                  (s) => s.start.getTime() === slot.start.getTime()
-                );
+            uiSlots.map((slot, idx) => {
+              const selected = selectedSlots.some(
+                (s) => s.start.getTime() === slot.start.getTime()
+              );
 
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSlotClick(slot)}
-                    className={`border rounded-lg py-2 text-sm font-medium transition ${
-                      isSelected
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white hover:border-blue-600 text-gray-700"
-                    }`}
-                  >
-                    {formatTime(slot.start)} – {formatTime(slot.end)}
-                  </button>
-                );
-              })}
-            </div>
+              // 🚫 Disable past slots only for today
+              const isPastSlot =
+                isToday && slot.end.getTime() <= now.getTime();
+
+              return (
+                <button
+                  key={idx}
+                  disabled={isPastSlot}
+                  className={`slot-btn 
+                    ${selected ? "slot-selected" : ""} 
+                    ${isPastSlot ? "slot-disabled" : ""}
+                  `}
+                  onClick={() => {
+                    if (!isPastSlot) handleSlotClick(slot);
+                  }}
+                >
+                  {formatTime(slot.start)} – {formatTime(slot.end)}
+                </button>
+              );
+            })
           )}
         </div>
 
+        {/* PRICE */}
         {selectedSlots.length > 0 && (
-          <div className="mb-6 text-lg font-semibold text-blue-700">
-            Total Price: ₹{totalPrice}
-          </div>
+          <div className="total-price">Total Price: ₹{totalPrice}</div>
         )}
 
         <button
           onClick={handleAddToCart}
-          disabled={!spotId || selectedSlots.length === 0}
-          className={`w-full py-3 rounded font-semibold flex items-center justify-center gap-2 ${
-            spotId && selectedSlots.length
-              ? "bg-blue-600 text-white hover:bg-blue-700"
-              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+          className={`add-cart-btn ${
+            !spotId || selectedSlots.length === 0 ? "disabled" : ""
           }`}
         >
           <FiShoppingCart size={18} /> Add To Cart
         </button>
       </div>
 
-      {/* RIGHT PREVIEW (Updated Image Gallery Area) */}
-      <div className="flex-1 bg-gray-100 border rounded-xl flex items-center justify-center relative group min-h-[400px]">
+      {/* LEFT SIDE → IMAGE GALLERY */}
+      <div className="booking-gallery">
         {images.length > 0 ? (
           <>
-            {/* Image display */}
             <img
               src={`data:image/jpeg;base64,${images[currentImgIndex].imageData}`}
-              alt="Spot Preview"
-              className="w-full h-full object-cover rounded-xl"
+              className="gallery-img"
+              alt="court"
             />
 
-            {/* Carousel Controls (Arrows) */}
             {images.length > 1 && (
               <>
                 <button
+                  className="gallery-arrow left"
                   onClick={prevImage}
-                  className="absolute left-4 p-2 bg-white/80 rounded-full shadow hover:bg-white transition"
                 >
-                  <FiChevronLeft size={24} className="text-gray-800" />
-                </button>
-                <button
-                  onClick={nextImage}
-                  className="absolute right-4 p-2 bg-white/80 rounded-full shadow hover:bg-white transition"
-                >
-                  <FiChevronRight size={24} className="text-gray-800" />
+                  <FiChevronLeft size={24} />
                 </button>
 
-                {/* Dots indicator */}
-                <div className="absolute bottom-4 flex gap-2">
+                <button
+                  className="gallery-arrow right"
+                  onClick={nextImage}
+                >
+                  <FiChevronRight size={24} />
+                </button>
+
+                <div className="gallery-dots">
                   {images.map((_, idx) => (
-                    <div
+                    <span
                       key={idx}
-                      className={`h-2 w-2 rounded-full transition-all ${
-                        idx === currentImgIndex ? "bg-blue-600 w-4" : "bg-white/70"
+                      className={`dot ${
+                        idx === currentImgIndex ? "active" : ""
                       }`}
                     />
                   ))}
@@ -311,11 +308,9 @@ export default function Booking() {
             )}
           </>
         ) : (
-          <div className="text-center">
-            <FiCalendar size={40} className="mx-auto text-gray-300 mb-2" />
-            <p className="text-gray-400 font-medium">
-              {spotId ? "No images available for this court" : "Select a court to view photos"}
-            </p>
+          <div className="no-image-box">
+            <FiCalendar size={40} className="no-img-icon" />
+            <p>No images available</p>
           </div>
         )}
       </div>

@@ -17,7 +17,7 @@ public class FoodItemService {
 
 	public String addFoodItemService(FoodItem foodItem) {
 
-		Optional<FoodItem> result = foodItemRepository.findById(foodItem.getFoodId());
+		Optional<FoodItem> result = foodItemRepository.findById(foodItem.getFoodItemId());
 
 		if (result.isPresent()) {
 			return "FoodItem Id Must Be Unique";
@@ -31,9 +31,9 @@ public class FoodItemService {
 		return foodItemRepository.findAll();
 	}
 
-	public FoodItem findFoodItemById(int foodId) {
+	public FoodItem findFoodItemById(int foodItemId) {
 
-		Optional<FoodItem> result = foodItemRepository.findById(foodId);
+		Optional<FoodItem> result = foodItemRepository.findById(foodItemId);
 
 		if (result.isPresent()) {
 			return result.get();
@@ -44,19 +44,15 @@ public class FoodItemService {
 
 	public String updateFoodItem(FoodItem foodItem) {
 
-		Optional<FoodItem> result = foodItemRepository.findById(foodItem.getFoodId());
+		Optional<FoodItem> result = foodItemRepository.findById(foodItem.getFoodItemId());
 
 		if (result.isPresent()) {
 			FoodItem fi = result.get();
-			fi.setFoodName(foodItem.getFoodName());
-			fi.setFoodDescription(foodItem.getFoodDescription());
-			fi.setFoodQuantityRegular(foodItem.getFoodQuantityRegular());
-			fi.setFoodQuantityLarge(foodItem.getFoodQuantityLarge());
-			fi.setFoodPriceRegular(foodItem.getFoodPriceRegular());
-			fi.setFoodPriceLarge(foodItem.getFoodPriceLarge());
-			fi.setAvailable(foodItem.isAvailable());
+			fi.setFoodItemName(foodItem.getFoodItemName());
+			fi.setFoodItemDescription(foodItem.getFoodItemDescription());
 			fi.setImage(foodItem.getImage());
-			fi.setSubService(foodItem.getSubService());
+			fi.setAvailable(foodItem.isAvailable());
+			fi.setFoodMenu(foodItem.getFoodMenu());
 			foodItemRepository.saveAndFlush(fi);
 			return "FoodItem Updated Successfully";
 		} else {
@@ -64,12 +60,12 @@ public class FoodItemService {
 		}
 	}
 
-	public String deleteFoodItem(int foodId) {
+	public String deleteFoodItem(int foodItemId) {
 
-		Optional<FoodItem> result = foodItemRepository.findById(foodId);
+		Optional<FoodItem> result = foodItemRepository.findById(foodItemId);
 
 		if (result.isPresent()) {
-			foodItemRepository.deleteById(foodId);
+			foodItemRepository.deleteById(foodItemId);
 			return "FoodItem Deleted Successfully";
 		} else {
 			return "FoodItem Record Not Present";

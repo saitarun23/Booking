@@ -1,4 +1,6 @@
-/* SubServices Page Styles - Consistent with Categories */
+/* =====================================
+   SubServices Page Base Layout
+===================================== */
 
 .subservices-wrapper {
   background: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
@@ -6,15 +8,18 @@
   padding-bottom: 3rem;
 }
 
-.subservices-container {
-  max-width: 100%;
+/* Content container under the hero */
+.subservices-content-section {
+  max-width: 80rem;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 0;
-  padding-right: 0;
+  padding: 3rem 1rem 3rem;
 }
 
-/* Header Section - Full Width Video */
+/* =====================================
+   Header Section (video hero)
+===================================== */
+
 .subservices-header {
   position: relative;
   width: 100%;
@@ -23,33 +28,25 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin-bottom: 0;
-  border-radius: 0;
 }
 
 .subservices-header-video {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 0;
 }
 
 .subservices-header-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.3) 0%,
     rgba(0, 0, 0, 0.5) 50%,
     rgba(0, 0, 0, 0.7) 100%
   );
-  z-index: 1;
 }
 
 .subservices-header-content {
@@ -59,18 +56,36 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 0;
   padding: 3rem 2rem;
-  max-width: 800px;
+  max-width: 48rem;
+}
+
+.subservices-category-badge {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 .subservices-title {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  letter-spacing: -0.5px;
+}
+
+.subservices-subtitle {
+  font-size: 1.05rem;
+  color: #e5e7eb;
+  max-width: 42rem;
+  line-height: 1.6;
 }
 
 @media (min-width: 768px) {
@@ -79,20 +94,18 @@
   }
 
   .subservices-title {
-    font-size: 3.5rem;
+    font-size: 3rem;
+  }
+
+  .subservices-subtitle {
+    font-size: 1.125rem;
   }
 }
 
-.subservices-subtitle {
-  font-size: 1.125rem;
-  color: #f0f0f0;
-  max-width: 42rem;
-  line-height: 1.6;
-  margin-bottom: 0;
-  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-}
+/* =====================================
+   Back Button
+===================================== */
 
-/* Back Button */
 .subservices-back-btn {
   display: inline-flex;
   align-items: center;
@@ -105,10 +118,8 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   font-size: 0.875rem;
-  position: relative;
-  z-index: 10;
 }
 
 .subservices-back-btn:hover {
@@ -118,25 +129,10 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.subservices-back-btn svg {
-  width: 1rem;
-  height: 1rem;
-}
+/* =====================================
+   Loading / Error
+===================================== */
 
-/* Content Wrapper */
-.subservices-content-section {
-  padding-top: 3rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.subservices-content-inner {
-  max-width: 80rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Loading State */
 .subservices-loading {
   display: flex;
   justify-content: center;
@@ -155,13 +151,7 @@
   border: 4px solid #dbeafe;
   border-top-color: #2563eb;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  animation: subservices-spin 1s linear infinite;
 }
 
 .subservices-loading-text {
@@ -171,77 +161,113 @@
   font-weight: 500;
 }
 
-/* Error State */
+@keyframes subservices-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .subservices-error {
+  max-width: 48rem;
+  margin: 3rem auto;
   background-color: #fef2f2;
   border-left: 4px solid #ef4444;
   color: #991b1b;
   padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
-.subservices-error-flex {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
+/* =====================================
+   SubServices Grid
+   (copying Categories logic)
+===================================== */
 
-.subservices-error-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: 0.75rem;
-  flex-shrink: 0;
-}
-
-.subservices-error-title {
-  font-weight: 700;
-  margin: 0 0 0.25rem 0;
-}
-
-.subservices-error-message {
-  margin: 0;
-  font-size: 0.875rem;
-}
-
-/* Grid Layout */
 .subservices-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: 1fr;        /* mobile: 1 column */
   gap: 2rem;
+  padding-top: 2rem;
 }
 
-@media (min-width: 640px) {
+/* Tablet, laptop, desktop: 2 columns */
+@media (min-width: 768px) {
   .subservices-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 1024px) {
-  .subservices-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+/* =====================================
+   CARD inside SubServices grid
+   (overrides shared <Card /> to look like Categories)
+===================================== */
+
+.subservices-grid > div {
+  background-color: #ffffff;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  display: flex;
+  flex-direction: column;
 }
 
-@media (min-width: 1280px) {
-  .subservices-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+/* Hover effect */
+.subservices-grid > div:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.16);
 }
 
-/* Empty State */
+/* Image wrapper (same ratio as categories) */
+.subservices-grid > div > div:first-child {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  background-color: #e5e7eb;
+}
+
+/* Image */
+.subservices-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.28s ease;
+}
+
+/* Subtle zoom on hover */
+.subservices-grid > div:hover img {
+  transform: scale(1.05);
+}
+
+/* Body section */
+.subservices-grid > div > div:nth-child(2) {
+  padding: 1rem 1.1rem 1.25rem;
+}
+
+/* Title */
+.subservices-grid h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* Description */
+.subservices-grid p {
+  font-size: 0.92rem;
+  color: #475569;
+  margin-top: 0.45rem;
+  line-height: 1.55;
+}
+
+/* =====================================
+   Empty State
+===================================== */
+
 .subservices-empty {
   text-align: center;
   padding: 4rem 1rem;
-}
-
-.subservices-empty-icon {
-  width: 4rem;
-  height: 4rem;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1.5rem;
-  color: #d1d5db;
 }
 
 .subservices-empty-title {
@@ -256,50 +282,37 @@
   font-size: 0.95rem;
 }
 
-/* Stats Section */
-.subservices-stats {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background-color: #ffffff;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 0.1);
-  flex-wrap: wrap;
+/* =====================================
+   Responsive Tweaks
+===================================== */
+
+/* Phones */
+@media (max-width: 640px) {
+  .subservices-title {
+    font-size: 1.9rem;
+  }
+
+  .subservices-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .subservices-grid {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+
+  .subservices-grid > div > div:first-child {
+    height: 200px;
+  }
 }
 
-.subservices-stat-item {
-  text-align: center;
-}
+/* Tablets (iPad portrait) */
+@media (min-width: 641px) and (max-width: 900px) {
+  .subservices-title {
+    font-size: 2.3rem;
+  }
 
-.subservices-stat-value {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #2563eb;
-}
-
-.subservices-stat-label {
-  color: #6b7280;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-/* Category Badge */
-.subservices-category-badge {
-  display: inline-block;
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-}
-
-/* Responsive Container */
-.subservices-page {
-  display: block;
+  .subservices-grid > div > div:first-child {
+    height: 320px;
+  }
 }

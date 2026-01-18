@@ -1,16 +1,20 @@
+// src/components/Navbar.jsx
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { FiLogIn, FiUserPlus } from "react-icons/fi"; // ⬅️ icons here
 import "../styles/navbar.css";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-content">
           {/* Logo */}
-          <Link to="/" className="navbar-logo-link">
+          <Link to="/" className="navbar-logo-link" onClick={closeMenu}>
             <span className="navbar-logo">BookingHub</span>
           </Link>
 
@@ -19,72 +23,112 @@ export default function Navbar() {
             <Link to="/" className="navbar-link">
               Home
             </Link>
-            {/* <div className="navbar-dropdown">
-              <button className="navbar-dropdown-button">
-                <span>Services</span>
-                <svg className="navbar-dropdown-icon" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-              <div className="navbar-dropdown-menu">
-                <Link to="/categories" className="navbar-dropdown-item">Categories</Link>
-                <Link to="/venues" className="navbar-dropdown-item">Venues</Link>
-              </div>
-            </div> */}
+            
+            <Link to="/categories" className="navbar-link">
+              Categories
+            </Link>
             <Link to="/about" className="navbar-link">
               About
             </Link>
             <Link to="/contact" className="navbar-link">
               Contact
             </Link>
-            {/* <Link to="/cart" className="navbar-cart-link">
-              Cart
-              <span className="navbar-cart-badge">0</span>
-            </Link> */}
           </div>
 
-          {/* Auth Buttons */}
+          {/* Desktop Auth Icons */}
           <div className="navbar-auth">
-            <button className="navbar-signin-btn">
-              Sign In
+            <button
+              className="navbar-signin-btn"
+              aria-label="Sign In"
+              title="Sign In"
+            >
+              <FiLogIn className="navbar-auth-icon" />
+            </button>
+            <button
+              className="navbar-signup-btn"
+              aria-label="Sign Up"
+              title="Sign Up"
+            >
+              <FiUserPlus className="navbar-auth-icon" />
             </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
+            type="button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="navbar-mobile-btn"
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMenuOpen}
+            aria-controls="navbar-mobile-menu"
           >
-            <svg className="navbar-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+            <svg
+              className="navbar-mobile-icon"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d={
+                  isMenuOpen
+                    ? "M6 18L18 6M6 6l12 12" // X icon
+                    : "M4 6h16M4 12h16M4 18h16" // Hamburger
+                }
+              />
             </svg>
           </button>
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="navbar-mobile-menu active">
-            <Link to="/" className="navbar-mobile-link">
-              Home
-            </Link>
-            <Link to="/venues" className="navbar-mobile-link">
-              Venues
-            </Link>
-            <Link to="/categories" className="navbar-mobile-link">
-              Categories
-            </Link>
-            {/* <Link to="/cart" className="navbar-mobile-link">
-              Cart
-            </Link> */}
-            <div className="navbar-mobile-divider"></div>
-            <button className="navbar-mobile-signin-btn">
-              Sign In
-            </button>
-            <button className="navbar-mobile-signup-btn">
-              Sign Up
-            </button>
-          </div>
-        )}
+        <div
+          id="navbar-mobile-menu"
+          className={`navbar-mobile-menu ${isMenuOpen ? "active" : ""}`}
+          aria-hidden={!isMenuOpen}
+        >
+          <Link to="/" className="navbar-mobile-link" onClick={closeMenu}>
+            Home
+          </Link>
+          
+          <Link
+            to="/categories"
+            className="navbar-mobile-link"
+            onClick={closeMenu}
+          >
+            Categories
+          </Link>
+          <Link to="/about" className="navbar-mobile-link" onClick={closeMenu}>
+            About
+          </Link>
+          <Link
+            to="/contact"
+            className="navbar-mobile-link"
+            onClick={closeMenu}
+          >
+            Contact
+          </Link>
+
+          <div className="navbar-mobile-divider"></div>
+
+          <button
+            className="navbar-mobile-signin-btn"
+            onClick={closeMenu}
+            aria-label="Sign In"
+            title="Sign In"
+          >
+            <FiLogIn className="navbar-auth-icon" />
+          </button>
+          <button
+            className="navbar-mobile-signup-btn"
+            onClick={closeMenu}
+            aria-label="Sign Up"
+            title="Sign Up"
+          >
+            <FiUserPlus className="navbar-auth-icon" />
+          </button>
+        </div>
       </div>
     </nav>
   );

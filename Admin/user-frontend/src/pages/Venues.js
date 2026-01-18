@@ -22,7 +22,6 @@ export default function Venues() {
     getVenues(id)
       .then((res) => {
         const venues = res.data || [];
-        // Since API returns list, take the first venue (or you can adjust based on your needs)
         if (venues.length > 0) {
           setVenue(venues[0]);
         } else {
@@ -87,7 +86,11 @@ export default function Venues() {
           <div className="venue-error">
             <div className="venue-error-flex">
               <svg className="venue-error-icon" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
               </svg>
               <div>
                 <h2 className="venue-error-title">Error Loading Venue</h2>
@@ -100,7 +103,8 @@ export default function Venues() {
     );
   }
 
-  const venueImages = venue.images && Array.isArray(venue.images) ? venue.images : [venue.image];
+  const venueImages =
+    venue.images && Array.isArray(venue.images) ? venue.images : [venue.image];
   const currentImage = venueImages[currentImageIndex];
   const imageSrc = getImageSrc(currentImage);
 
@@ -116,10 +120,7 @@ export default function Venues() {
             Categories
           </span>
           <span className="venue-breadcrumb-separator">›</span>
-          <span
-            className="venue-breadcrumb-link"
-            onClick={() => nav(-1)}
-          >
+          <span className="venue-breadcrumb-link" onClick={() => nav(-1)}>
             Services
           </span>
           <span className="venue-breadcrumb-separator">›</span>
@@ -128,21 +129,30 @@ export default function Venues() {
 
         {/* Main Content */}
         <div className="venue-content">
-          {/* Left Column - Gallery and Info */}
-          <div>
+          {/* LEFT column: gallery + details */}
+          <div className="venue-main-column">
             {/* Gallery */}
             <div className="venue-gallery">
               <div className="venue-main-image" style={{ position: "relative" }}>
                 <img
-                  src={imageSrc || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect fill='%23ddd' width='600' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%23999'%3ENo Image Available%3C/text%3E%3C/svg%3E"}
+                  src={
+                    imageSrc ||
+                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect fill='%23ddd' width='600' height='400'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%23999'%3ENo Image Available%3C/text%3E%3C/svg%3E"
+                  }
                   alt={venue.venueName}
                 />
                 {venueImages.length > 1 && (
                   <>
-                    <button className="carousel-nav-btn carousel-prev" onClick={handlePrevImage}>
+                    <button
+                      className="carousel-nav-btn carousel-prev"
+                      onClick={handlePrevImage}
+                    >
                       ‹
                     </button>
-                    <button className="carousel-nav-btn carousel-next" onClick={handleNextImage}>
+                    <button
+                      className="carousel-nav-btn carousel-next"
+                      onClick={handleNextImage}
+                    >
                       ›
                     </button>
                   </>
@@ -153,7 +163,9 @@ export default function Venues() {
                   {venueImages.map((_, index) => (
                     <div
                       key={index}
-                      className={`carousel-dot ${index === currentImageIndex ? "active" : ""}`}
+                      className={`carousel-dot ${
+                        index === currentImageIndex ? "active" : ""
+                      }`}
                       onClick={() => setCurrentImageIndex(index)}
                     />
                   ))}
@@ -173,7 +185,6 @@ export default function Venues() {
             {/* Amenities */}
             <div className="amenities-box">
               <h3>Amenities</h3>
-
               <div className="amenities-list">
                 {venue.venueAmenities
                   ?.split(",")
@@ -188,9 +199,14 @@ export default function Venues() {
 
             {/* Sports Section */}
             {venue.sports && venue.sports.length > 0 && (
-              <div className="venue-sports-section" style={{ marginTop: "2rem" }}>
+              <div
+                className="venue-sports-section"
+                style={{ marginTop: "2rem" }}
+              >
                 <h2 className="venue-sports-title">Sports Available</h2>
-                <p className="venue-sports-subtitle">(Click on sports to view price chart)</p>
+                <p className="venue-sports-subtitle">
+                  (Click on sports to view price chart)
+                </p>
                 <div className="venue-sports-grid">
                   {venue.sports.map((sport, idx) => (
                     <div
@@ -206,7 +222,6 @@ export default function Venues() {
               </div>
             )}
 
-        
             {/* About Venue */}
             {(venue.venueDescription || venue.description) && (
               <div className="venue-about-section">
@@ -219,13 +234,11 @@ export default function Venues() {
                       <p key={idx}>{para.trim()}</p>
                     ))}
                   {venue.features && venue.features.length > 0 && (
-                    <>
-                      <ul className="venue-about-list">
-                        {venue.features.map((feature, idx) => (
-                          <li key={idx}>{feature}</li>
-                        ))}
-                      </ul>
-                    </>
+                    <ul className="venue-about-list">
+                      {venue.features.map((feature, idx) => (
+                        <li key={idx}>{feature}</li>
+                      ))}
+                    </ul>
                   )}
                 </div>
               </div>
@@ -244,9 +257,8 @@ export default function Venues() {
             )}
           </div>
 
-          {/* Right Column - Sidebar */}
+          {/* RIGHT column: sidebar */}
           <div className="venue-sidebar">
-            {/* Book Now Button */}
             <button
               className="venue-book-btn venue-book-btn-gradient"
               onClick={() => nav(`/booking/${venue.venueId}`)}
@@ -254,7 +266,6 @@ export default function Venues() {
               Book Now
             </button>
 
-            {/* Info Card */}
             <div className="venue-info-card">
               {venue.openingTime && venue.closingTime && (
                 <div className="venue-info-item">
@@ -271,10 +282,12 @@ export default function Venues() {
                 </div>
               )}
             </div>
-           
-            {/* Location Map Card */}
+
             {venue.latitude && venue.longitude && (
-              <div className="venue-info-card" style={{ padding: 0, overflow: "hidden" }}>
+              <div
+                className="venue-info-card"
+                style={{ padding: 0, overflow: "hidden" }}
+              >
                 <VenueLocation venue={venue} />
               </div>
             )}

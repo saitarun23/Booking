@@ -36,8 +36,17 @@ export const getCategories = () => API.get("/categories");
 export const getSubServices = (categoryId) =>
   API.get(`/subservices/${categoryId}`);
 
-export const getFoodItems = (serviceId) =>
-  API.get(`/food-items/${serviceId}`);
+export const getFoodTypes = (serviceId) =>
+  API.get(`/food-types/${serviceId}`);
+
+export const getFoodMenus = (foodTypeId) =>
+  API.get(`/food-menus/${foodTypeId}`);
+
+export const getFoodItems = (foodMenuId) =>
+  API.get(`/food-items/${foodMenuId}`);
+
+export const getFoodVariants = (foodItemId) =>
+  API.get(`/food-variants/${foodItemId}`);
 
 export const getVenues = (serviceId) =>
   API.get(`/venues/${serviceId}`);

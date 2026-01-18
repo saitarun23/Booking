@@ -3,7 +3,10 @@ import Login from "./pages/Login";
 import Categories from "./pages/Categories";
 import ProtectedRoute from "./ProtectedRoute";
 import SubServices from "./pages/SubServices";
+import FoodTypes from "./pages/FoodTypes";
+import FoodMenu from "./pages/FoodMenu";
 import FoodItems from "./pages/FoodItems";
+import FoodVariant from "./pages/FoodVariant";
 import Venues from "./pages/Venues";
 import Spots from "./pages/Spots";
 import SpotImages from "./pages/SpotImages";
@@ -48,6 +51,24 @@ function App() {
           />
 
           <Route 
+            path="/foodtypes" 
+            element={
+              <ProtectedRoute>
+                <FoodTypes />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/foodmenu" 
+            element={
+              <ProtectedRoute>
+                <FoodMenu />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
             path="/fooditems" 
             element={
               <ProtectedRoute>
@@ -55,7 +76,16 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          
+
+          <Route 
+            path="/foodvariant" 
+            element={
+              <ProtectedRoute>
+                <FoodVariant />
+              </ProtectedRoute>
+            } 
+          />
+
           <Route 
             path="/venues" 
             element={

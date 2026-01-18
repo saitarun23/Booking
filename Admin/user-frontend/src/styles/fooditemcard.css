@@ -1,0 +1,387 @@
+/* =========================
+   FOOD ITEM CARD (SWIGGY-LIKE)
+========================= */
+
+.food-card-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  padding: 1rem 0.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.food-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.food-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.food-card-desc {
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.food-card-meta {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.food-card-unavailable {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+/* RIGHT: IMAGE + BUTTON */
+.food-card-right {
+  width: 110px;
+  height: 110px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #e5e7eb;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.food-card-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.food-card-customisable-pill {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #f9fafb;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+
+/* Floating Add or stepper */
+.floating-add-btn {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  border: 1px solid #22c55e;
+  padding: 0.2rem 1.2rem;
+  background: #ecfdf3;
+  color: #15803d;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.floating-add-btn:hover {
+  background: #bbf7d0;
+}
+
+.floating-stepper-wrapper {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Stepper for single variant */
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid #22c55e;
+  overflow: hidden;
+  background: #ecfdf3;
+}
+
+.qty-stepper.small {
+  transform: scale(0.9);
+}
+
+.qty-stepper button {
+  border: none;
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  color: #15803d;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.qty-stepper span {
+  min-width: 24px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #15803d;
+}
+
+/* Bone / Boneless badge */
+.variant-badge {
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  font-size: 0.72rem;
+}
+
+/* Boneless (yellow like your screenshot) */
+.variant-badge.boneless {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Bone (light red pill) */
+.variant-badge.bone {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* =========================
+   VARIANT MODAL (customise popup)
+========================= */
+
+.variant-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 90;
+}
+
+.variant-modal {
+  width: 90%;
+  max-width: 520px;
+  max-height: 80vh;
+  background: #f9fafb;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.variant-modal-header {
+  padding: 1rem 1.2rem 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.variant-modal-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.variant-modal-price {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  margin-top: 0.25rem;
+}
+
+.variant-modal-close {
+  border: none;
+  background: #e5e7eb;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.variant-modal-close:hover {
+  background: #d4d4d8;
+}
+
+/* BODY */
+.variant-modal-body {
+  padding: 0.75rem 1.2rem 1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.variant-modal-subtitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.75rem;
+}
+
+.variant-modal-section {
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  padding: 0.75rem 0.9rem 0.9rem;
+}
+
+.variant-modal-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.55rem;
+}
+
+.variant-modal-section-header span:first-child {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.variant-modal-section-optional {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* variant rows inside modal */
+.variant-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.variant-modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.variant-modal-row:first-of-type {
+  border-top: none;
+}
+
+.variant-modal-row-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.variant-modal-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.variant-modal-row-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.variant-modal-row-sub {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* right side: price + checkbox style */
+.variant-modal-row-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.variant-modal-row-price {
+  font-size: 0.85rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+/* checkbox look */
+.variant-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: transparent;
+  background: #f9fafb;
+}
+
+.variant-checkbox-checked {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+}
+
+/* BOTTOM BAR */
+.variant-modal-bottom {
+  padding: 0.7rem 1.2rem 0.9rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 0 0 24px 24px;
+}
+
+.variant-modal-total {
+  display: flex;
+  flex-direction: column;
+}
+
+.variant-modal-total-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.variant-modal-total-count {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.variant-modal-cta {
+  border: none;
+  background: #16a34a;
+  color: #f9fafb;
+  padding: 0.55rem 1.7rem;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.variant-modal-cta:hover {
+  background: #15803d;
+}
+
+/* Mobile tweaks */
+@media (max-width: 640px) {
+  .food-card-row {
+    gap: 0.6rem;
+  }
+
+  .food-card-right {
+    width: 95px;
+    height: 95px;
+  }
+
+  .variant-modal {
+    width: 94%;
+    max-width: 94%;
+  }
+}

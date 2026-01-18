@@ -18,27 +18,15 @@ public class FoodItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "food_id")
-    private int foodId;
+    @Column(name = "fooditem_id")
+    private int foodItemId;
 
-    @Column(name = "food_name", nullable = false, length = 150)
-    private String foodName;
+    @Column(name = "fooditem_name", nullable = false, length = 150)
+    private String foodItemName;
 
-    @Column(name = "food_description", columnDefinition = "TEXT")
-    private String foodDescription;
+    @Column(name = "fooditem_description", columnDefinition = "TEXT")
+    private String foodItemDescription;
 
-    @Column(name = "foodquantity_regular", nullable = false)
-    private String foodQuantityRegular;
-    
-    @Column(name = "foodquantity_large", nullable = false)
-    private String foodQuantityLarge;
-    
-    @Column(name = "foodprice_regular", nullable = false)
-    private Double foodPriceRegular;
-    
-    @Column(name = "foodprice_large", nullable = false)
-    private Double foodPriceLarge;
-    
 	@Lob
 	@Column(name="fooditem_image", columnDefinition = "LONGTEXT")
 	private String image;
@@ -47,6 +35,6 @@ public class FoodItem {
     private boolean available = true;
 
     @ManyToOne
-    @JoinColumn(name = "service_id", nullable = false)
-    private SubService subService;
+    @JoinColumn(name="foodmenu_id",nullable = false)
+    private FoodMenu foodMenu;
 }

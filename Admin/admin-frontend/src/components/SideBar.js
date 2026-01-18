@@ -7,7 +7,10 @@ export default function Sidebar() {
   const menuItems = [
     { path: "/categories", label: "Categories", icon: "📁" },
     { path: "/subservices", label: "Sub-Services", icon: "🔧" },
-    { path: "/fooditems", label: "Food Items", icon: "🍔" },
+    { path: "/foodtypes", label: "Food Types", icon: "🍔" },
+    { path: "/foodmenu", label: "Food Menu", icon: "🍽️" },
+    { path: "/fooditems", label: "Food Items", icon: "🥗" },
+    { path: "/foodvariant", label: "Food Variants", icon: "🥩" },
     { path: "/venues", label: "Venues", icon: "🏟️" },
     { path: "/spots", label: "Spots", icon: "📍" },
     { path: "/spotimages", label: "Spot Images", icon: "🖼️" },

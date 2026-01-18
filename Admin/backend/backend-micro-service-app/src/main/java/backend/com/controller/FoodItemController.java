@@ -32,9 +32,9 @@ public class FoodItemController {
 		return foodItemService.findAllFoodItem();
 	}
 
-	@GetMapping(value = "find_fooditem_byid/{foodid}")
-	public FoodItem getById(@PathVariable("foodid") int foodid) {
-		return foodItemService.findFoodItemById(foodid);
+	@GetMapping(value = "find_fooditem_byid/{fooditemid}")
+	public FoodItem getById(@PathVariable("fooditemid") int fooditemid) {
+		return foodItemService.findFoodItemById(fooditemid);
 	}
 
 	@PutMapping(value = "update_fooditem")
@@ -42,8 +42,8 @@ public class FoodItemController {
 		return foodItemService.updateFoodItem(foodItem);
 	}
 
-	@DeleteMapping(value = "delete_fooditem/{foodid}")
-	public String deleteFoodItem(@PathVariable("foodid") int foodid) {
-		return foodItemService.deleteFoodItem(foodid);
+	@DeleteMapping(value = "delete_fooditem/{fooditemid}")
+	public String deleteFoodItem(@PathVariable("fooditemid") int fooditemid) {
+		return foodItemService.deleteFoodItem(fooditemid);
 	}
 }

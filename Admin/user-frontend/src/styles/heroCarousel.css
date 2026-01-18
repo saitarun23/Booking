@@ -1,3 +1,9 @@
+/* Wrapper so arrows position relative to the hero only */
+.hero-carousel-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 /* Hero Carousel Styles */
 
 .hero-carousel {
@@ -19,7 +25,7 @@
   display: block;
 }
 
-/* Responsive */
+/* Responsive base */
 @media (max-width: 768px) {
   .hero-carousel {
     height: 300px;
@@ -53,19 +59,35 @@
 }
 
 .hero-slide-overlay.fade-blue {
-  background: linear-gradient(to right, rgba(30, 58, 138, 0.7), rgba(37, 99, 235, 0.7));
+  background: linear-gradient(
+    to right,
+    rgba(30, 58, 138, 0.7),
+    rgba(37, 99, 235, 0.7)
+  );
 }
 
 .hero-slide-overlay.fade-purple {
-  background: linear-gradient(to right, rgba(88, 28, 135, 0.7), rgba(126, 58, 237, 0.7));
+  background: linear-gradient(
+    to right,
+    rgba(88, 28, 135, 0.7),
+    rgba(126, 58, 237, 0.7)
+  );
 }
 
 .hero-slide-overlay.fade-green {
-  background: linear-gradient(to right, rgba(20, 83, 45, 0.7), rgba(34, 197, 94, 0.7));
+  background: linear-gradient(
+    to right,
+    rgba(20, 83, 45, 0.7),
+    rgba(34, 197, 94, 0.7)
+  );
 }
 
 .hero-slide-overlay.fade-red {
-  background: linear-gradient(to right, rgba(127, 29, 29, 0.7), rgba(239, 68, 68, 0.7));
+  background: linear-gradient(
+    to right,
+    rgba(127, 29, 29, 0.7),
+    rgba(239, 68, 68, 0.7)
+  );
 }
 
 .hero-slide-content {
@@ -183,6 +205,7 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* legacy nav buttons (unused with custom arrows) */
 .hero-nav-button {
   position: absolute;
   top: 50%;
@@ -255,7 +278,7 @@
   background-color: rgba(255, 255, 255, 0.75);
 }
 
-/* Responsive Design */
+/* Responsive Design for text/buttons */
 @media (max-width: 768px) {
   .hero-nav-button {
     display: none;
@@ -277,5 +300,78 @@
   .hero-nav-button.next {
     width: 2.5rem;
     height: 2.5rem;
+  }
+}
+
+/* ================================
+   Custom React-Icon Arrows
+=================================== */
+
+/* Hide default swiper arrows */
+.hero-carousel .swiper-button-next,
+.hero-carousel .swiper-button-prev {
+  display: none !important;
+}
+
+/* Custom arrow base */
+.hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  border: none;
+  background: rgba(15, 23, 42, 0.8);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.55);
+  transition: 0.2s ease;
+  opacity: 0; /* default hidden, shown on hover for larger screens */
+  z-index: 20;
+}
+
+/* Show arrows when hovering on desktop/laptop */
+.hero-carousel-wrapper:hover .hero-arrow {
+  opacity: 1;
+}
+
+/* Adjust arrow icon size */
+.hero-arrow svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+/* Hover animation */
+.hero-arrow:hover {
+  background: rgba(15, 23, 42, 0.95);
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Positioning */
+.hero-arrow-left {
+  left: 1rem;
+}
+.hero-arrow-right {
+  right: 1rem;
+}
+
+/* 📱 Mobile: show arrows always, smaller & closer to edges */
+@media (max-width: 768px) {
+  .hero-arrow {
+    opacity: 1;
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .hero-arrow-left {
+    left: 0.5rem;
+  }
+
+  .hero-arrow-right {
+    right: 0.5rem;
   }
 }
