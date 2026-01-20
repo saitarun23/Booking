@@ -6,10 +6,10 @@ import artsVideo from "../assets/arts.mp4";
 
 export const getCategoryVideo = (categoryName = "") => {
   const map = {
-    "play booking": playVideo,
-    "hall booking": hallVideo,
-    "food booking": foodVideo,
-    "Art & Crafts": artsVideo,
+    "gamezone reservation": playVideo,
+    "event hall reservation": hallVideo,
+    "culinary reservations": foodVideo,
+    "art & crafts": artsVideo,
   };
 
   return map[categoryName.toLowerCase()];

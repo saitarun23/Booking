@@ -36,6 +36,11 @@ export default function FoodPage() {
     [menus, selectedMenuId]
   );
 
+  /* --------- SCROLL TO TOP ---------- */
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [serviceId]);
+
   /* --------- LOAD FOOD TYPES ---------- */
   useEffect(() => {
     setLoadingTypes(true);
